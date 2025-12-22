@@ -1,0 +1,438 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Soleil</title>
+
+  <!-- Fuentes -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg:#f7f4ee;
+      --card:#ffffff;
+      --text:#111;
+      --muted:rgba(17,17,17,.55);
+      --line:#e7e1d8;
+      --radius:18px;
+      --shadow:0 18px 50px rgba(0,0,0,.06);
+      --max:1180px;
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      background:var(--bg);
+      color:var(--text);
+      font-family:Inter,system-ui,Arial,sans-serif;
+    }
+    a{text-decoration:none;color:inherit}
+    button,input{font:inherit}
+
+    /* Top bar */
+    .topbar{
+      position:sticky;top:0;z-index:50;
+      background:rgba(255,255,255,.75);
+      backdrop-filter:blur(10px);
+      border-bottom:1px solid var(--line);
+      padding:10px;
+      text-align:center;
+      font-size:12px;
+      letter-spacing:.18em;
+      text-transform:uppercase;
+      color:var(--muted);
+    }
+
+    header{
+      max-width:var(--max);
+      margin:auto;
+      padding:18px 16px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:16px;
+    }
+
+    .brand{
+      font-family:"Playfair Display",serif;
+      font-size:26px;
+      font-weight:600;
+    }
+
+    .hamburger{
+      width:42px;height:42px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background:#fff;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      cursor:pointer;
+    }
+    .hamburger span,
+    .hamburger span:before,
+    .hamburger span:after{
+      content:"";
+      display:block;
+      width:18px;height:2px;
+      background:#111;
+      position:relative;
+    }
+    .hamburger span:before{top:-6px;position:absolute}
+    .hamburger span:after{top:6px;position:absolute}
+
+    .container{
+      max-width:var(--max);
+      margin:auto;
+      padding:0 16px 70px;
+    }
+
+    /* Hero */
+    .hero{
+      display:grid;
+      grid-template-columns:1.2fr .8fr;
+      gap:18px;
+      margin-bottom:18px;
+    }
+    .heroCard{
+      background:rgba(255,255,255,.6);
+      border:1px solid var(--line);
+      border-radius:22px;
+      padding:20px;
+    }
+    .hero h1{
+      font-family:"Playfair Display",serif;
+      font-size:48px;
+      margin:0;
+    }
+    .hero p{color:var(--muted);line-height:1.7}
+
+    .heroAside{
+      background:linear-gradient(135deg,#efe8dc,#fbf8f2);
+      border:1px solid var(--line);
+      border-radius:22px;
+      padding:20px;
+    }
+
+    .btn{
+      padding:10px 14px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background:#fff;
+      cursor:pointer;
+      font-size:13px;
+    }
+    .btn.primary{
+      background:#111;
+      color:#fff;
+      border-color:#111;
+    }
+
+    /* Search */
+    .searchRow{
+      display:flex;
+      gap:10px;
+      margin:10px 0;
+    }
+    .search{
+      flex:1;
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:999px;
+      padding:12px 14px;
+    }
+    .search input{
+      border:none;
+      outline:none;
+      width:100%;
+      background:transparent;
+    }
+
+    /* Chips */
+    .chips{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0}
+    .chip{
+      padding:10px 14px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background:#fff;
+      cursor:pointer;
+      font-size:13px;
+      color:var(--muted);
+    }
+    .chip.active{
+      background:#111;
+      color:#fff;
+      border-color:#111;
+    }
+
+    /* Grid */
+    .section{margin-top:28px}
+    .section h2{
+      font-family:"Playfair Display",serif;
+      font-size:28px;
+      margin-bottom:10px;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:14px;
+    }
+
+    @media(max-width:900px){.grid{grid-template-columns:repeat(2,1fr)}}
+    @media(max-width:480px){.grid{grid-template-columns:1fr}}
+
+    .card{
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      overflow:hidden;
+      box-shadow:var(--shadow);
+      display:flex;
+      flex-direction:column;
+    }
+
+    .placeholder{
+      aspect-ratio:4/5;
+      background:linear-gradient(135deg,#efe8dc,#fbf8f2);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:rgba(0,0,0,.3);
+      font-size:12px;
+      letter-spacing:.2em;
+      text-transform:uppercase;
+      font-family:"Playfair Display",serif;
+    }
+
+    .info{padding:14px;display:flex;flex-direction:column;gap:10px}
+    .price{font-weight:500}
+
+    footer{
+      border-top:1px solid var(--line);
+      padding:20px;
+      text-align:center;
+      font-size:13px;
+      color:var(--muted);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="topbar">Soleil • PEDIDOS POR WHATSAPP</div>
+
+  <header>
+    <div class="brand">Soleil</div>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <div class="heroCard">
+        <h1>Colección</h1>
+        <p>Piezas delicadas y minimalistas. Elige tu favorita y pide directo por WhatsApp.</p>
+      </div>
+      <div class="heroAside">
+        <p><strong>Pedidos</strong></p>
+        <p>Presiona “Pedir por WhatsApp” y el mensaje se genera automáticamente.</p>
+        <a class="btn primary" target="_blank"
+           href="https://wa.me/50767908504?text=Hola%20Mar%20Coral%20Brand%2C%20quiero%20hacer%20una%20consulta">
+          WhatsApp
+        </a>
+      </div>
+    </section>
+
+    <div class="searchRow">
+      <div class="search">
+        <input id="searchInput" placeholder="Buscar (perla, 11:11, corazón…)" />
+      </div>
+    </div>
+
+    <div class="chips" id="chips"></div>
+    <select id="sortSelect" class="chip" style="margin-top:10px;">
+  <option value="default">Ordenar por</option>
+  <option value="price-asc">Precio: menor a mayor</option>
+  <option value="price-desc">Precio: mayor a menor</option>
+  <option value="name-asc">Nombre: A–Z</option>
+  <option value="name-desc">Nombre: Z–A</option>
+</select>
+
+
+    <section class="section">
+      <h2>Piezas</h2>
+      <div class="grid" id="grid"></div>
+    </section>
+  </main>
+
+  <footer>© Soleil</footer>
+
+  <script>
+    const WHATSAPP = "50767908504";
+    const wa = (msg) => "https://wa.me/" + WHATSAPP + "?text=" + encodeURIComponent(msg);
+
+    const products = [
+  { id: "collares-11-11", name: "11:11", desc: "Collar delicado minimalista con dije circular", price: 11.95, category: "collares" },
+  { id: "brazaletes-alga-dorada", name: "Alga Dorada", desc: "Pulsera de cuentas translúcidas inspirada en el mar", price: 5.99, category: "brazaletes" },
+  { id: "anillos-anillos-amistad", name: "Anillos Amistad", desc: "Set de anillos con diseño de corazones", price: 2.99, category: "anillos" },
+  { id: "aretes-aretes-claudia", name: "Aretes Claudia", desc: "Aretes pequeños metálicos de diseño orgánico", price: 9.99, category: "aretes" },
+  { id: "aretes-aretes-nacar", name: "Aretes Nácar", desc: "Aretes de nácar natural con acabado elegante", price: 14.95, category: "aretes" },
+  { id: "anillos-anillos-primavera", name: "Anillos Primavera", desc: "Set de anillos con acabado brillante, estilo floral", price: 5.99, category: "anillos" },
+  { id: "brazaletes-arrecife", name: "Arrecife", desc: "Pulsera con cuentas en tonos coral y dorado", price: 7.99, category: "brazaletes" },
+  { id: "anillos-aurora", name: "Aurora", desc: "Anillo delicado con acabado plateado y detalle brillante", price: 5.99, category: "anillos" },
+  { id: "brazaletes-brazalete-estrella", name: "Brazalete Estrella", desc: "Pulsera fina con dije de estrella", price: 6.99, category: "brazaletes" },
+  { id: "brazaletes-brazalete-luna", name: "Brazalete Luna", desc: "Pulsera fina con dije de luna", price: 6.99, category: "brazaletes" },
+  { id: "aretes-burbujas", name: "Burbujas", desc: "Aretes pequeños redondos con acabado pulido", price: 4.99, category: "aretes" },
+  { id: "collares-cadena-rafaella", name: "Cadena Rafaella", desc: "Cadena dorada de eslabones finos", price: 14.99, category: "collares" },
+  { id: "collares-collar-azulado", name: "Collar Azulado", desc: "Collar de cuentas azul pastel con corazón rojo", price: 21.00, category: "collares" },
+  { id: "collares-collar-baru", name: "Collar Barú", desc: "Collar verde con dije de corazón rojo", price: 28.99, category: "collares" },
+  { id: "collares-collar-caracola", name: "Collar Caracola", desc: "Collar blanco con detalles suaves nacarados", price: 15.95, category: "collares" },
+  { id: "collares-collar-carmel", name: "Collar Carmel", desc: "Collar coral con dije de corazón rojo", price: 21.00, category: "collares" },
+  { id: "collares-collar-catherine", name: "Collar Catherine", desc: "Collar perlado con flor blanca", price: 17.99, category: "collares" },
+  { id: "collares-collar-coral", name: "Collar Coral", desc: "Collar delicado con diseño inspirado en el mar", price: 12.99, category: "collares" },
+  { id: "collares-collar-crescent", name: "Collar Crescent", desc: "Collar con media luna dorada", price: 10.99, category: "collares" },
+  { id: "collares-collar-crystal", name: "Collar Crystal", desc: "Collar con detalles brillantes tipo cristal", price: 13.99, category: "collares" },
+  { id: "collares-collar-evelyn", name: "Collar Evelyn", desc: "Collar dorado con dije de corazón rojo", price: 22.99, category: "collares" },
+  { id: "collares-collar-flor", name: "Collar Flor", desc: "Collar delicado con flor blanca", price: 15.99, category: "collares" },
+  { id: "collares-collar-gaby", name: "Collar Gaby", desc: "Collar verde con flor blanca", price: 15.99, category: "collares" },
+  { id: "collares-collar-helen", name: "Collar Helen", desc: "Collar perlado con dije de corazón rojo", price: 21.99, category: "collares" },
+  { id: "collares-collar-kimberly", name: "Collar Kimberly", desc: "Collar con cadena y flor blanca", price: 15.99, category: "collares" },
+  { id: "collares-collar-lila", name: "Collar Lila", desc: "Collar con cuentas lila y dije de corazón rojo", price: 21.00, category: "collares" },
+  { id: "collares-collar-loreto", name: "Collar Loreto", desc: "Collar rosado con dije de corazón rojo", price: 21.00, category: "collares" },
+  { id: "collares-collar-lucia", name: "Collar Lucía", desc: "Collar perlado con flor blanca", price: 17.99, category: "collares" },
+  { id: "collares-collar-mila", name: "Collar Mila", desc: "Collar rosado con flor blanca", price: 15.99, category: "collares" },
+  { id: "collares-collar-moon", name: "Collar Moon", desc: "Collar con media luna dorada", price: 10.99, category: "collares" },
+  { id: "collares-collar-natalia", name: "Collar Natalia", desc: "Collar dorado con flor blanca", price: 15.99, category: "collares" },
+  { id: "collares-collar-olivia", name: "Collar Olivia", desc: "Collar verde con flor blanca", price: 15.99, category: "collares" },
+  { id: "collares-collar-perla-roja", name: "Collar Perla Roja", desc: "Collar perlado con corazón rojo", price: 21.99, category: "collares" },
+  { id: "collares-collar-rocio", name: "Collar Rocío", desc: "Collar con flor blanca y cadena fina", price: 15.99, category: "collares" },
+  { id: "collares-collar-sahara", name: "Collar Sahara", desc: "Collar coral con flor blanca", price: 15.99, category: "collares" },
+  { id: "collares-collar-selene", name: "Collar Selene", desc: "Collar con flor blanca y media luna dorada", price: 15.99, category: "collares" },
+  { id: "collares-collar-serena", name: "Collar Serena", desc: "Collar con cuentas azules y flor blanca", price: 15.99, category: "collares" },
+  { id: "collares-collar-sirena", name: "Collar Sirena", desc: "Collar con detalles marinos delicados", price: 12.99, category: "collares" },
+  { id: "collares-collar-star", name: "Collar Star", desc: "Collar con estrella dorada", price: 10.99, category: "collares" },
+  { id: "collares-collar-susurro", name: "Collar Susurro", desc: "Collar delicado con dije pequeño y elegante", price: 10.99, category: "collares" },
+  { id: "collares-collar-tesoro", name: "Collar Tesoro", desc: "Collar con dije tipo moneda vintage", price: 13.99, category: "collares" },
+  { id: "collares-collar-tropical", name: "Collar Tropical", desc: "Collar multicolor con flor blanca", price: 15.99, category: "collares" },
+  { id: "collares-collar-valentina", name: "Collar Valentina", desc: "Collar perlado con flor blanca", price: 17.99, category: "collares" },
+  { id: "collares-collar-viento", name: "Collar Viento", desc: "Collar delicado minimalista", price: 10.99, category: "collares" },
+  { id: "collares-collar-vista-mar", name: "Collar Vista Mar", desc: "Collar con detalles marinos elegantes", price: 12.99, category: "collares" },
+  { id: "collares-collar-zafiro", name: "Collar Zafiro", desc: "Collar con detalle azul elegante", price: 13.99, category: "collares" },
+  { id: "collares-susurro-del-mar", name: "Susurro del Mar", desc: "Collar inspirado en el mar, delicado", price: 12.99, category: "collares" },
+  { id: "collares-tesoro-del-mar", name: "Tesoro del Mar", desc: "Collar con dije marino, elegante", price: 13.99, category: "collares" },
+
+  { id: "aretes-aretes-cecilia", name: "Aretes Cecilia", desc: "Aretes circulares grabados artesanales", price: 18.99, category: "aretes" },
+  { id: "aretes-aretes-escondida", name: "Aretes Escondida", desc: "Aretes pequeños de perla clásica", price: 7.99, category: "aretes" },
+  { id: "aretes-aretes-paloma", name: "Aretes Paloma", desc: "Aretes perlados con cadena", price: 9.99, category: "aretes" },
+  { id: "aretes-aretes-perla", name: "Aretes Perla", desc: "Aretes clásicos de perla", price: 6.99, category: "aretes" },
+  { id: "aretes-aretes-puff", name: "Aretes Puff", desc: "Aretes pequeños con textura suave", price: 13.99, category: "aretes" },
+  { id: "aretes-aretes-rocia", name: "Aretes Rocía", desc: "Aretes con detalle brillante", price: 13.99, category: "aretes" },
+  { id: "aretes-aretes-sahara", name: "Aretes Sahara", desc: "Aretes en tonos cálidos, estilo elegante", price: 13.99, category: "aretes" },
+  { id: "aretes-aretes-selene", name: "Aretes Selene", desc: "Aretes colgantes con detalle de luna", price: 9.99, category: "aretes" },
+  { id: "aretes-aretes-trio", name: "Aretes Trio", desc: "Set de aretes pequeños, 3 pares", price: 4.99, category: "aretes" },
+
+  { id: "anillos-anillos-constanza", name: "Anillos Constanza", desc: "Set de anillos delicados con detalles brillantes", price: 5.99, category: "anillos" },
+  { id: "anillos-anillos-del-mar", name: "Anillos del Mar", desc: "Set de anillos con detalles marinos", price: 5.99, category: "anillos" },
+  { id: "anillos-anillos-iris", name: "Anillos Iris", desc: "Set de anillos con diseño minimalista", price: 5.99, category: "anillos" },
+  { id: "anillos-anillos-lia", name: "Anillos Lía", desc: "Set de anillos delicados para uso diario", price: 5.99, category: "anillos" },
+  { id: "anillos-anillos-sirio", name: "Anillos Sirio", desc: "Set de anillos con toque elegante", price: 5.99, category: "anillos" },
+  { id: "anillos-anillos-susurro", name: "Anillos Susurro", desc: "Set de anillos finos, estilo minimalista", price: 5.99, category: "anillos" },
+  { id: "anillos-anillos-viento", name: "Anillos Viento", desc: "Set de anillos con diseño delicado", price: 5.99, category: "anillos" },
+  { id: "anillos-anillos-vista-mar", name: "Anillos Vista Mar", desc: "Set de anillos con inspiración marina", price: 5.99, category: "anillos" },
+  { id: "anillos-anillos-zafiro", name: "Anillos Zafiro", desc: "Set de anillos con detalle azul", price: 5.99, category: "anillos" },
+
+  { id: "brazaletes-brisa-dorada", name: "Brisa Dorada", desc: "Pulsera dorada delicada", price: 6.99, category: "brazaletes" },
+  { id: "brazaletes-coralina", name: "Coralina", desc: "Pulsera en tonos coral y perla", price: 8.99, category: "brazaletes" },
+  { id: "brazaletes-duna", name: "Duna", desc: "Pulsera con cuentas beige y doradas, inspiración arena", price: 6.99, category: "brazaletes" },
+  { id: "brazaletes-espejo-del-mar", name: "Espejo del Mar", desc: "Pulsera con brillo sutil", price: 6.99, category: "brazaletes" },
+  { id: "brazaletes-espuma", name: "Espuma", desc: "Pulsera de cuentas blancas con detalle dorado", price: 5.99, category: "brazaletes" },
+  { id: "brazaletes-flor-de-sal", name: "Flor de Sal", desc: "Pulsera delicada inspirada en el mar", price: 6.99, category: "brazaletes" },
+  { id: "brazaletes-iris", name: "Iris", desc: "Pulsera de cuentas con tonos pastel y dorado", price: 6.99, category: "brazaletes" },
+  { id: "brazaletes-laguna", name: "Laguna", desc: "Pulsera con cuentas turquesas y doradas", price: 6.99, category: "brazaletes" },
+  { id: "brazaletes-lucero", name: "Lucero", desc: "Pulsera fina con dije brillante", price: 6.99, category: "brazaletes" },
+  { id: "brazaletes-marea", name: "Marea", desc: "Pulsera de cuentas azules con acabado elegante", price: 6.99, category: "brazaletes" },
+  { id: "brazaletes-marina", name: "Marina", desc: "Pulsera con cuentas en tonos marinos", price: 6.99, category: "brazaletes" },
+  { id: "brazaletes-pulsera-tropico", name: "Pulsera Trópico", desc: "Pulsera multicolor alegre", price: 12.99, category: "brazaletes" },
+  { id: "brazaletes-pulseras-ajustables", name: "Pulseras Ajustables", desc: "Pulseras de hilo ajustables multicolor", price: 1.99, category: "brazaletes" },
+  { id: "brazaletes-pulseras-tejidas", name: "Pulseras Tejidas", desc: "Pulseras tejidas con detalles dorados", price: 6.99, category: "brazaletes" }
+];
+
+
+    let active = "all";
+
+    const chips = document.getElementById("chips");
+    const grid = document.getElementById("grid");
+    const search = document.getElementById("searchInput");
+    const sortSelect = document.getElementById("sortSelect");
+
+
+    function renderChips(){
+      const cats = ["all","aretes","anillos","collares","brazaletes"];
+      chips.innerHTML = cats.map(c =>
+        `<button class="chip ${active===c?"active":""}" data-c="${c}">
+          ${c==="all"?"Todo":c}
+        </button>`
+      ).join("");
+      chips.querySelectorAll("button").forEach(b=>{
+        b.onclick=()=>{active=b.dataset.c;render()}
+      });
+    }
+
+    function render(){
+  let list = [...products];
+
+  // filtro por categoría (chips)
+  if(active !== "all"){
+    list = list.filter(p => p.category === active);
+  }
+
+  // filtro por búsqueda
+  const q = search.value.toLowerCase();
+  if(q){
+    list = list.filter(p =>
+      (`${p.name} ${p.desc}`).toLowerCase().includes(q)
+    );
+  }
+
+  // ORDEN
+  const sort = sortSelect.value;
+  if(sort === "price-asc"){
+    list.sort((a,b) => a.price - b.price);
+  }
+  if(sort === "price-desc"){
+    list.sort((a,b) => b.price - a.price);
+  }
+  if(sort === "name-asc"){
+    list.sort((a,b) => a.name.localeCompare(b.name));
+  }
+  if(sort === "name-desc"){
+    list.sort((a,b) => b.name.localeCompare(a.name));
+  }
+
+  // render cards
+  grid.innerHTML = list.map(p => `
+    <div class="card">
+      <div class="placeholder">Soleil</div>
+      <div class="info">
+        <strong>${p.name}</strong>
+        <span>$${p.price.toFixed(2)}</span>
+        <a class="btn primary" target="_blank"
+           href="https://wa.me/50767908504?text=${encodeURIComponent(
+             `Hola Soleil, quiero pedir: ${p.name} - $${p.price.toFixed(2)}`
+           )}">
+          Pedir por WhatsApp
+        </a>
+      </div>
+    </div>
+  `).join("");
+}
+
+
+    search.oninput=render;
+    sortSelect.onchange=render;
+    renderChips();
+    render();
+  </script>
+</body>
+</html>
