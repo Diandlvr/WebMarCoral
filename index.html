@@ -417,6 +417,19 @@
   body{ padding-bottom: 84px; }
 }
 
+.brand img{
+  height: 36px;
+  width: auto;
+  display: block;
+}
+
+/* mobile */
+@media (max-width: 640px){
+  .brand img{
+    height: 32px;
+  }
+}
+
 
   </style>
 </head>
@@ -432,7 +445,13 @@
 </a>
 
 <body>
-  <div class="topbar">Soleil • PEDIDOS POR WHATSAPP</div>
+  <header class="topbar">
+  <div class="brand">
+    <img src="img/logo.png" alt="Soleil" />
+  </div>
+
+  <button class="menu-btn">☰</button>
+</header>
 
   <header>
     <div class="brand">Soleil</div>
