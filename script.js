@@ -2,6 +2,18 @@ const WHATSAPP = "50767908504";
 const wa = (msg) =>
   "https://wa.me/" + WHATSAPP + "?text=" + encodeURIComponent(msg);
 
+function updateWaFloatLink() {
+  const waFloat = document.getElementById("waFloat");
+  if (!waFloat) return;
+
+  const msg =
+    active && active !== "all"
+      ? `Hola 😊 Estoy viendo la categoría "${active}" y quiero pedir.`
+      : "Hola 😊 Quiero ver el catálogo Mar Coral / Soleil y pedir.";
+
+  waFloat.href = wa(msg);
+}
+
 const waFloat = document.getElementById("waFloat");
 if (waFloat) {
   waFloat.href = wa("Hola, Quiero ver el catálogo de Soleil");
@@ -17,11 +29,88 @@ const CATEGORY_MAP = {
 
 let products = [];
 let active = "all";
+(async function init() {
+  try {
+    products = await getProducts(); // ← carga desde CSV
+    renderChips();                  // ← usa products
+    updateWaFloatLink
+  } catch (e) {
+    console.error(e);
+    grid.innerHTML = `<p style="padding:12px">No se pudo cargar el catálogo.</p>`;
+  }
+})();
+
 
 const chips = document.getElementById("chips");
 const grid = document.getElementById("grid");
 const search = document.getElementById("searchInput");
 const sortSelect = document.getElementById("sortSelect");
+
+// ========= Data layer (Repository) =========
+async function getProducts() {
+  // Hoy: CSV local
+  const res = await fetch("./productos.csv", { cache: "no-store" });
+  if (!res.ok) throw new Error("No se pudo cargar productos.csv");
+  const text = await res.text();
+  return parseCSV(text);
+}
+
+// CSV parser (simple + soporta comillas)
+function parseCSV(csvText) {
+  const lines = csvText.split(/\r?\n/).filter(l => l.trim().length);
+  if (lines.length < 2) return [];
+
+  const headers = splitCSVLine(lines[0]).map(h => h.trim().toLowerCase());
+  const rows = lines.slice(1);
+
+  const items = rows.map(line => {
+    const cols = splitCSVLine(line);
+    const obj = {};
+    headers.forEach((h, i) => (obj[h] = (cols[i] ?? "").trim()));
+
+    // normalización
+    const precioNum = Number(String(obj.precio).replace(/[^\d.]/g, "")) || 0;
+
+    return {
+      producto: obj.producto || obj.nombre || "",
+      descripcion: obj.descripcion || "",
+      precio: precioNum,
+      categoria: (obj.categoria || "otros").toLowerCase(),
+      imagen: obj.imagen || "" // por ahora vacío; después lo usas
+    };
+  });
+
+  return items.filter(p => p.producto);
+}
+
+function splitCSVLine(line) {
+  const out = [];
+  let cur = "";
+  let inQuotes = false;
+
+  for (let i = 0; i < line.length; i++) {
+    const ch = line[i];
+
+    if (ch === '"') {
+      if (inQuotes && line[i + 1] === '"') {
+        cur += '"';
+        i++;
+      } else {
+        inQuotes = !inQuotes;
+      }
+      continue;
+    }
+
+    if (ch === "," && !inQuotes) {
+      out.push(cur);
+      cur = "";
+      continue;
+    }
+    cur += ch;
+  }
+  out.push(cur);
+  return out;
+}
 
 // --- CSV helpers ---
 function parseCSVLine(line) {
