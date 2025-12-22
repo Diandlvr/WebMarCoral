@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="description" content="Catálogo digital de joyería Mar Coral / Soleil. Collares, aretes, anillos y brazaletes con diseño elegante y contemporáneo. Compra fácil por WhatsApp.">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <title>Soleil</title>
 
@@ -278,6 +279,44 @@
   background:#111;
   color:#fff;
   border-color:#111;
+}
+
+  /* Mejoras Mobile UX */
+@media (max-width: 640px) {
+  body {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  /* chips desplazables horizontal */
+  #chips {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 6px;
+    scroll-snap-type: x mandatory;
+  }
+  #chips::-webkit-scrollbar { display: none; }
+
+  #chips .chip {
+    flex: 0 0 auto;
+    scroll-snap-align: start;
+    white-space: nowrap;
+  }
+
+  /* grid más cómodo en celular */
+  #grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+}
+
+/* Para pantallas muy pequeñas */
+@media (max-width: 360px) {
+  #grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 

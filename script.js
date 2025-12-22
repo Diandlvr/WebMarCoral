@@ -103,11 +103,21 @@ async function loadCSV() {
 
   return items;
 }
+function animateGrid() {
+  grid.style.opacity = "0";
+  grid.style.transform = "translateY(6px)";
+  grid.style.transition = "opacity 180ms ease, transform 180ms ease";
+  requestAnimationFrame(() => {
+    grid.style.opacity = "1";
+    grid.style.transform = "translateY(0)";
+  });
+}
 
 // --- UI ---
 function renderChips() {
   const set = new Set(products.map((p) => p.category));
   const cats = ["all", ...Array.from(set).sort()];
+ 
 
   chips.innerHTML = cats
     .map(
@@ -156,6 +166,7 @@ function render() {
   // vacío
   if (list.length === 0) {
     grid.innerHTML = `<div style="padding:14px; color:rgba(17,17,17,.55);">No se encontraron productos.</div>`;
+
     return;
   }
 
@@ -177,6 +188,7 @@ function render() {
     `
     )
     .join("");
+     animateGrid();
 }
 
 function escapeHtml(str) {
@@ -270,3 +282,4 @@ async function init() {
 }
 
 document.addEventListener("DOMContentLoaded", init);
+
