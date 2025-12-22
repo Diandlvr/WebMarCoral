@@ -204,6 +204,79 @@
       font-size:13px;
       color:var(--muted);
     }
+ /* Menu hamburguesa */
+.menu-backdrop{
+  position:fixed; inset:0;
+  background:rgba(0,0,0,.35);
+  opacity:0; pointer-events:none;
+  transition:.25s; z-index:60;
+}
+.menu-backdrop.show{ opacity:1; pointer-events:auto; }
+
+.side-menu{
+  position:fixed; top:0; right:-320px;
+  width:300px; height:100%;
+  background:#fff;
+  border-left:1px solid var(--line);
+  transition:.3s; z-index:70;
+  padding:16px;
+  display:flex; flex-direction:column;
+}
+.side-menu.open{ right:0; }
+
+.side-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:14px;
+}
+
+.side-menu nav{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
+.mc-side-item{
+  text-align:left;
+  padding:10px 12px;
+  border-radius:10px;
+  border:1px solid var(--line);
+  background:#fff;
+  cursor:pointer;
+
+}
+
+.hamburger{
+  width:42px;height:42px;
+  border-radius:999px;
+  border:1px solid var(--line);
+  background:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+}
+.hamburger span,
+.hamburger span::before,
+.hamburger span::after{
+  content:"";
+  display:block;
+  width:18px;height:2px;
+  background:#111;
+  position:relative;
+}
+.hamburger span::before{position:absolute; top:-6px;}
+.hamburger span::after{position:absolute; top:6px;}
+
+
+.mc-side-item.active{
+  background:#111;
+  color:#fff;
+  border-color:#111;
+}
+
+
   </style>
 </head>
 
@@ -212,7 +285,20 @@
 
   <header>
     <div class="brand">Soleil</div>
+    <button class="hamburger" id="burgerBtn" aria-label="Abrir menú">
+  <span></span>
+</button>
   </header>
+  <div id="menuBackdrop" class="menu-backdrop"></div>
+
+<aside id="sideMenu" class="side-menu">
+  <div class="side-header">
+    <strong>Categorías</strong>
+    <button id="closeMenuBtn" aria-label="Cerrar menú">✕</button>
+  </div>
+  <nav id="sideCategories"></nav>
+</aside>
+
 
   <main class="container">
     <section class="hero">
