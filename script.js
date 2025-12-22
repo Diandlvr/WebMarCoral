@@ -129,7 +129,10 @@ function render() {
   if (q) {
     list = list.filter((p) => (`${p.name} ${p.desc}`).toLowerCase().includes(q));
   }
-
+  const resultsCount = document.getElementById("resultsCount");
+if (resultsCount) {
+  resultsCount.textContent = `${list.length} producto(s)`;
+}
   // orden
   const sort = sortSelect.value;
   if (sort === "price-asc") list.sort((a, b) => a.price - b.price);
@@ -171,6 +174,18 @@ async function init() {
     products = await loadCSV();
     renderChips();
     render();
+    // Botón limpiar filtros
+const clearBtn = document.getElementById("clearBtn");
+if (clearBtn) {
+  clearBtn.addEventListener("click", () => {
+    active = "all";
+    search.value = "";
+    sortSelect.value = "default";
+    renderChips();
+    render();
+  });
+}
+
     search.addEventListener("input", render);
     sortSelect.addEventListener("change", render);
   } catch (e) {

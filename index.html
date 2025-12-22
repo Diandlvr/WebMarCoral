@@ -236,6 +236,7 @@
       <div class="search">
         <input id="searchInput" placeholder="Buscar (perla, 11:11, corazón…)" />
       </div>
+        <button id="clearBtn" class="chip" type="button">Limpiar</button>
 
       <select id="sortSelect" class="chip" aria-label="Ordenar productos">
         <option value="default">Ordenar por</option>
@@ -244,6 +245,9 @@
         <option value="name-asc">Nombre: A–Z</option>
         <option value="name-desc">Nombre: Z–A</option>
       </select>
+      <div style="margin-top:6px; color: rgba(17,17,17,.55); font-size:13px;">
+  <span id="resultsCount"></span>
+</div>
     </div>
 
     <!-- Chips de categorías -->
