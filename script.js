@@ -1,5 +1,11 @@
 const WHATSAPP = "50767908504";
-const wa = (msg) => "https://wa.me/" + WHATSAPP + "?text=" + encodeURIComponent(msg);
+const wa = (msg) =>
+  "https://wa.me/" + WHATSAPP + "?text=" + encodeURIComponent(msg);
+
+const waFloat = document.getElementById("waFloat");
+if (waFloat) {
+  waFloat.href = wa("Hola, Quiero ver el catálogo de Soleil");
+}
 
 // Mapa: menú (singular) -> CSV (plural)
 const CATEGORY_MAP = {
