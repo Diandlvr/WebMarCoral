@@ -14,7 +14,7 @@ Sitio web del proyecto **Mar Coral Brand**, enfocado en la visualización de un 
 - `package.json` → Configuración del proyecto
 
 ## Estado del proyecto
-🚧 En desarrollo (prototipo funcional)
+En Desarollo
 
 ## Autor
 Juan Pitti
