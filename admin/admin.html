@@ -1,0 +1,603 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>WebMarCoral Admin</title>
+  <style>
+    :root{
+      --bg:#0b0f14; --card:#111826; --muted:#9aa4b2; --text:#e6edf3;
+      --accent:#ff4fa3; --ok:#22c55e; --warn:#f59e0b; --danger:#ef4444; --line:#243244;
+      --input:#0f172a;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;background:linear-gradient(180deg,#070a0f, #0b0f14);color:var(--text)}
+    .wrap{max-width:1200px;margin:0 auto;padding:18px}
+    h1{font-size:18px;margin:0}
+    .sub{color:var(--muted);font-size:12px;margin-top:4px}
+    .top{
+      display:flex;gap:12px;flex-wrap:wrap;align-items:center;justify-content:space-between;
+      padding:14px 16px;background:rgba(17,24,38,.85);border:1px solid var(--line);
+      border-radius:16px;position:sticky;top:12px;backdrop-filter: blur(10px);z-index:2;
+    }
+    .stepbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+    .chip{
+      border:1px solid var(--line);border-radius:999px;padding:6px 10px;font-size:12px;color:var(--muted);
+      background:rgba(255,255,255,.03);display:inline-flex;align-items:center;gap:8px;
+    }
+    .chip b{color:var(--text);font-weight:700}
+    .dot{width:10px;height:10px;border-radius:999px;background:#64748b}
+    .dot.ok{background:var(--ok)}
+    .dot.bad{background:var(--danger)}
+    .dot.warn{background:var(--warn)}
+    .right{display:flex;gap:10px;flex-wrap:wrap;align-items:end}
+    label{display:flex;flex-direction:column;gap:6px;font-size:12px;color:var(--muted)}
+    input, select, textarea{
+      background:var(--input); color:var(--text); border:1px solid var(--line); border-radius:12px;
+      padding:10px 12px; outline:none; min-width:220px;
+    }
+    textarea{min-height:38px; resize:vertical}
+    input:focus, textarea:focus{border-color:rgba(255,79,163,.7); box-shadow:0 0 0 3px rgba(255,79,163,.15)}
+    .btn{
+      border:1px solid var(--line); background:rgba(255,255,255,.04); color:var(--text);
+      padding:10px 12px; border-radius:12px; cursor:pointer; font-weight:700;
+    }
+    .btn.primary{background:rgba(255,79,163,.18); border-color:rgba(255,79,163,.45)}
+    .btn.ghost{background:transparent}
+    .btn.danger{background:rgba(239,68,68,.12); border-color:rgba(239,68,68,.45)}
+    .btn:disabled{opacity:.55;cursor:not-allowed}
+    .card{
+      margin-top:14px;background:rgba(17,24,38,.85);border:1px solid var(--line);
+      border-radius:16px;overflow:hidden;
+    }
+    .card h2{
+      margin:0;padding:12px 16px;font-size:14px;border-bottom:1px solid var(--line);
+      display:flex;align-items:center;justify-content:space-between;gap:12px;
+    }
+    .hint{font-size:12px;color:var(--muted);font-weight:500}
+    .body{padding:14px 16px}
+    .grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+    @media(max-width:980px){.grid{grid-template-columns:1fr 1fr}}
+    @media(max-width:680px){
+      .grid{grid-template-columns:1fr}
+      input,textarea,select{min-width:unset;width:100%}
+      .right{width:100%}
+    }
+    .toolbar{display:flex;gap:12px;flex-wrap:wrap;align-items:center;justify-content:space-between;margin-bottom:10px}
+    .badge{
+      display:inline-flex;align-items:center;gap:8px;padding:6px 10px;border-radius:999px;
+      border:1px solid var(--line);color:var(--muted);font-size:12px;background:rgba(255,255,255,.03);
+    }
+    .tablewrap{overflow:auto;border:1px solid rgba(36,50,68,.65);border-radius:14px}
+    table{width:100%;border-collapse:separate;border-spacing:0;min-width:1020px;background:rgba(15,23,42,.45)}
+    th,td{padding:10px 12px;border-bottom:1px solid rgba(36,50,68,.7);vertical-align:top}
+    th{position:sticky;top:0;background:#0f172a;text-align:left;font-size:12px;color:var(--muted);z-index:1}
+    td input, td textarea, td select{min-width:unset;width:100%;padding:8px 10px;border-radius:10px}
+    .id{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;font-size:12px;color:#cbd5e1}
+    .imgprev{
+      width:44px;height:44px;border-radius:10px;border:1px solid rgba(36,50,68,.7);object-fit:cover;background:#0b1020;
+    }
+    .rowactions{display:flex;gap:8px;align-items:center}
+    .statepill{font-size:12px;padding:5px 10px;border-radius:999px;border:1px solid var(--line);display:inline-flex;gap:6px;align-items:center}
+    .statepill.on{border-color:rgba(34,197,94,.45);color:#bbf7d0}
+    .statepill.off{border-color:rgba(239,68,68,.45);color:#fecaca}
+    .note{font-size:12px;color:var(--muted);line-height:1.4}
+    .toast{
+      position:fixed;right:16px;bottom:16px;background:#0f172a;border:1px solid var(--line);
+      border-radius:14px;padding:12px 14px;max-width:380px;display:none;
+      box-shadow:0 20px 45px rgba(0,0,0,.35);
+    }
+    .toast.show{display:block}
+    .toast b{display:block;margin-bottom:4px}
+    .toast p{margin:0;font-size:12px;color:var(--muted)}
+    .dangerzone{
+      border:1px dashed rgba(239,68,68,.55);border-radius:14px;padding:12px;background:rgba(239,68,68,.06)
+    }
+    .small{font-size:12px;color:var(--muted)}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="top">
+      <div>
+        <h1>WebMarCoral — Panel Admin</h1>
+        <div class="sub">Diseñado para usarlo fácil: conecta, revisa productos y edita con seguridad.</div>
+        <div class="stepbar" style="margin-top:10px">
+          <span class="chip"><span class="dot" id="dot"></span><b>1</b> Conexión: <span id="statusText">Sin verificar</span></span>
+          <span class="chip"><b>2</b> Productos: <span id="countText">0</span></span>
+          <span class="chip"><b>3</b> Última carga: <span id="lastLoad">—</span></span>
+        </div>
+      </div>
+
+      <div class="right">
+        <label>
+          API (tu backend)
+          <input id="apiUrl" placeholder="http://localhost:3001" />
+        </label>
+        <label>
+          Token admin (x-admin-token)
+          <input id="token" placeholder="Pega tu ADMIN_TOKEN aquí" />
+        </label>
+        <button class="btn primary" id="connectBtn">Conectar</button>
+        <button class="btn" id="refreshBtn" disabled>Actualizar</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>
+        Crear producto
+        <span class="hint">Solo escribe lo básico. Puedes editar después.</span>
+      </h2>
+      <div class="body">
+        <div class="grid">
+          <label>Nombre (obligatorio)
+            <input id="new_name" placeholder="Ej: Collar Perlas" />
+          </label>
+          <label>Precio (obligatorio)
+            <input id="new_price" type="number" step="0.01" placeholder="Ej: 12.50" />
+          </label>
+          <label>Categoría
+            <input id="new_category" placeholder="Ej: collar / anillo / arete" />
+          </label>
+          <label>Descripción
+            <input id="new_description" placeholder="Ej: Baño de oro, elegante..." />
+          </label>
+          <label>Imagen (URL o ruta)
+            <input id="new_image" placeholder="Ej: img/producto1.jpg" />
+          </label>
+          <label>¿Activo para vender?
+            <select id="new_active">
+              <option value="true" selected>Sí, se muestra</option>
+              <option value="false">No, oculto</option>
+            </select>
+          </label>
+        </div>
+
+        <div style="display:flex;gap:10px;align-items:center;margin-top:12px;flex-wrap:wrap">
+          <button class="btn primary" id="createBtn" disabled>Crear producto</button>
+          <span class="note" id="createNote">Conéctate primero para poder crear.</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>
+        Productos
+        <span class="hint">Edita una fila y usa Guardar / Cancelar.</span>
+      </h2>
+
+      <div class="body">
+        <div class="toolbar">
+          <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:end">
+            <label>Buscar
+              <input id="q" placeholder="Busca por nombre, categoría..." />
+            </label>
+            <label>Mostrar
+              <select id="activeFilter">
+                <option value="all" selected>Todos</option>
+                <option value="true">Solo activos</option>
+                <option value="false">Solo ocultos</option>
+              </select>
+            </label>
+          </div>
+
+          <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+            <span class="badge" id="countBadge">0 productos</span>
+            <span class="badge" id="helpBadge">Tip: “Oculto” = no se ve en la tienda</span>
+          </div>
+        </div>
+
+        <div class="tablewrap">
+          <table>
+            <thead>
+              <tr>
+                <th style="min-width:170px">ID</th>
+                <th style="min-width:230px">Nombre</th>
+                <th style="min-width:320px">Descripción</th>
+                <th style="min-width:120px">Precio</th>
+                <th style="min-width:300px">Imagen</th>
+                <th style="min-width:160px">Categoría</th>
+                <th style="min-width:140px">Estado</th>
+                <th style="min-width:260px">Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="tbody">
+              <tr><td colspan="8" class="small">Conéctate para ver productos.</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div style="margin-top:10px" class="note">
+          ✅ Cambios claros: primero editas → luego “Guardar”.<br/>
+          🧯 Prevención: borrar pide confirmación fuerte.<br/>
+          👀 Vista previa: si la imagen es válida, la verás.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast">
+    <b id="toastTitle">Listo</b>
+    <p id="toastMsg"></p>
+  </div>
+
+<script>
+  // ================= Config =================
+  const LS_API = "wm_admin_apiUrl";
+  const LS_TOKEN = "wm_admin_token";
+
+  const el = (id)=>document.getElementById(id);
+
+  const ui = {
+    apiUrl: el("apiUrl"),
+    token: el("token"),
+    connectBtn: el("connectBtn"),
+    refreshBtn: el("refreshBtn"),
+    dot: el("dot"),
+    statusText: el("statusText"),
+    countText: el("countText"),
+    lastLoad: el("lastLoad"),
+
+    new_name: el("new_name"),
+    new_price: el("new_price"),
+    new_category: el("new_category"),
+    new_description: el("new_description"),
+    new_image: el("new_image"),
+    new_active: el("new_active"),
+    createBtn: el("createBtn"),
+    createNote: el("createNote"),
+
+    q: el("q"),
+    activeFilter: el("activeFilter"),
+    tbody: el("tbody"),
+    countBadge: el("countBadge"),
+
+    toast: el("toast"),
+    toastTitle: el("toastTitle"),
+    toastMsg: el("toastMsg"),
+  };
+
+  function toast(title, msg){
+    ui.toastTitle.textContent = title;
+    ui.toastMsg.textContent = msg || "";
+    ui.toast.classList.add("show");
+    setTimeout(()=>ui.toast.classList.remove("show"), 2800);
+  }
+
+  function nowStr(){
+    const d = new Date();
+    return d.toLocaleString();
+  }
+
+  function apiBase(){
+    return (ui.apiUrl.value || "").trim().replace(/\/$/, "");
+  }
+  function token(){
+    return (ui.token.value || "").trim();
+  }
+  function headers(){
+    const h = { "Content-Type": "application/json" };
+    const t = token();
+    if (t) h["x-admin-token"] = t;
+    return h;
+  }
+
+  function setConn(state, text){
+    ui.dot.className = "dot " + (state || "");
+    ui.statusText.textContent = text;
+  }
+
+  let connected = false;
+  let allProducts = [];
+  const originalById = new Map(); // para cancelar edición
+
+  // ================= API =================
+  async function ping(){
+    try{
+      const res = await fetch(`${apiBase()}/api/admin/products`, { headers: headers() });
+      if (res.ok) return { ok:true };
+      return { ok:false, status:res.status };
+    }catch(e){
+      return { ok:false, status:0 };
+    }
+  }
+
+  async function getProducts(){
+    const res = await fetch(`${apiBase()}/api/admin/products`, { headers: headers() });
+    const data = await res.json().catch(()=>null);
+    if (!res.ok) throw new Error(data?.error || "No se pudo cargar productos.");
+    return Array.isArray(data) ? data : (data?.data || []);
+  }
+
+  async function createProduct(payload){
+    const res = await fetch(`${apiBase()}/api/admin/products`, {
+      method:"POST", headers: headers(), body: JSON.stringify(payload)
+    });
+    const data = await res.json().catch(()=>null);
+    if (!res.ok) throw new Error(data?.error || "No se pudo crear el producto.");
+    return data;
+  }
+
+  async function patchProduct(id, payload){
+    const res = await fetch(`${apiBase()}/api/admin/products/${encodeURIComponent(id)}`, {
+      method:"PATCH", headers: headers(), body: JSON.stringify(payload)
+    });
+    const data = await res.json().catch(()=>null);
+    if (!res.ok) throw new Error(data?.error || "No se pudo guardar el cambio.");
+    return data;
+  }
+
+  async function deleteProduct(id){
+    const res = await fetch(`${apiBase()}/api/admin/products/${encodeURIComponent(id)}`, {
+      method:"DELETE", headers: headers()
+    });
+    const data = await res.json().catch(()=>null);
+    if (!res.ok) throw new Error(data?.error || "No se pudo borrar el producto.");
+    return data;
+  }
+
+  // ================= Render =================
+  function esc(str){
+    return String(str ?? "")
+      .replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")
+      .replaceAll('"',"&quot;").replaceAll("'","&#039;");
+  }
+
+  function applyFilters(list){
+    const q = (ui.q.value || "").trim().toLowerCase();
+    const af = ui.activeFilter.value;
+    return list.filter(p=>{
+      const hay = [p.name,p.category,p.description,p.id].map(x=>String(x ?? "").toLowerCase()).join(" | ");
+      const matchQ = !q || hay.includes(q);
+      let matchA = true;
+      if (af === "true") matchA = !!p.active;
+      if (af === "false") matchA = !p.active;
+      return matchQ && matchA;
+    });
+  }
+
+  function markEdited(tr, edited){
+    tr.style.outline = edited ? "2px solid rgba(245,158,11,.35)" : "none";
+    tr.style.outlineOffset = edited ? "-2px" : "0";
+  }
+
+  function rowHasChanges(tr){
+    const id = tr.dataset.id;
+    const original = originalById.get(id);
+    if (!original) return false;
+
+    const cur = collectRow(tr);
+    const keys = ["name","description","price","image","category","active"];
+    return keys.some(k => String(cur[k] ?? "") !== String(original[k] ?? ""));
+  }
+
+  function collectRow(tr){
+    const id = tr.dataset.id;
+    const get = (sel)=>tr.querySelector(sel);
+    return {
+      id,
+      name: get('[data-field="name"]').value,
+      description: get('[data-field="description"]').value,
+      price: get('[data-field="price"]').value === "" ? null : Number(get('[data-field="price"]').value),
+      image: get('[data-field="image"]').value,
+      category: get('[data-field="category"]').value,
+      active: get('[data-field="active"]').value === "true",
+    };
+  }
+
+  function render(){
+    const list = applyFilters(allProducts);
+    ui.countText.textContent = String(allProducts.length);
+    ui.countBadge.textContent = `${list.length} productos`;
+
+    if (!connected){
+      ui.tbody.innerHTML = `<tr><td colspan="8" class="small">Conéctate para ver productos.</td></tr>`;
+      return;
+    }
+
+    if (!list.length){
+      ui.tbody.innerHTML = `<tr><td colspan="8" class="small">No hay resultados con ese filtro.</td></tr>`;
+      return;
+    }
+
+    ui.tbody.innerHTML = list.map(p=>{
+      const st = p.active ? "on" : "off";
+      const stText = p.active ? "Activo (se muestra)" : "Oculto (no se muestra)";
+      const img = esc(p.image || "");
+      const imgTag = img ? `<img class="imgprev" src="${img}" alt="img" onerror="this.style.opacity=.25" />`
+                         : `<div class="imgprev" style="display:flex;align-items:center;justify-content:center;color:rgba(148,163,184,.6)">—</div>`;
+
+      return `
+        <tr data-id="${esc(p.id)}">
+          <td class="id">${esc(p.id)}</td>
+
+          <td><input data-field="name" value="${esc(p.name)}" placeholder="Nombre" /></td>
+
+          <td><textarea data-field="description" placeholder="Descripción">${esc(p.description)}</textarea></td>
+
+          <td><input data-field="price" type="number" step="0.01" value="${esc(p.price)}" placeholder="0.00" /></td>
+
+          <td>
+            <div style="display:flex;gap:10px;align-items:center">
+              ${imgTag}
+              <input data-field="image" value="${esc(p.image)}" placeholder="URL o ruta de imagen" />
+            </div>
+          </td>
+
+          <td><input data-field="category" value="${esc(p.category)}" placeholder="Categoría" /></td>
+
+          <td>
+            <div class="statepill ${st}"><span class="dot ${p.active ? "ok":"bad"}"></span>${stText}</div>
+            <div style="margin-top:8px">
+              <select data-field="active" title="Si está oculto, no se ve en la tienda">
+                <option value="true" ${p.active ? "selected":""}>Activo</option>
+                <option value="false" ${!p.active ? "selected":""}>Oculto</option>
+              </select>
+            </div>
+          </td>
+
+          <td>
+            <div class="rowactions">
+              <button class="btn primary" data-action="save" disabled>Guardar</button>
+              <button class="btn ghost" data-action="cancel" disabled>Cancelar</button>
+              <button class="btn danger" data-action="delete">Borrar</button>
+            </div>
+            <div class="small" style="margin-top:6px;color:rgba(154,164,178,.9)">
+              Consejo: edita y guarda. “Cancelar” revierte esa fila.
+            </div>
+          </td>
+        </tr>
+      `;
+    }).join("");
+
+    // guardar originales (para cancelar)
+    originalById.clear();
+    allProducts.forEach(p=>{
+      originalById.set(String(p.id), {
+        name: p.name ?? "",
+        description: p.description ?? "",
+        price: p.price ?? "",
+        image: p.image ?? "",
+        category: p.category ?? "",
+        active: !!p.active
+      });
+    });
+  }
+
+  function refreshRowButtons(tr){
+    const changed = rowHasChanges(tr);
+    tr.querySelector('[data-action="save"]').disabled = !changed;
+    tr.querySelector('[data-action="cancel"]').disabled = !changed;
+    markEdited(tr, changed);
+  }
+
+  // ================= Flows (Nielsen-friendly) =================
+  async function connect(){
+    // guardar config (reconocimiento / no recordar)
+    localStorage.setItem(LS_API, apiBase());
+    localStorage.setItem(LS_TOKEN, token());
+
+    setConn("warn", "Verificando...");
+    ui.connectBtn.disabled = true;
+
+    const p = await ping();
+    if (!p.ok){
+      connected = false;
+      ui.refreshBtn.disabled = true;
+      ui.createBtn.disabled = true;
+      ui.createNote.textContent = p.status === 401
+        ? "No autorizado. Revisa el token (ADMIN_TOKEN)."
+        : "No se pudo conectar. Revisa la URL del backend y que esté corriendo.";
+      setConn("bad", p.status === 401 ? "Token incorrecto" : "No conecta");
+      ui.tbody.innerHTML = `<tr><td colspan="8" class="small">${esc(ui.createNote.textContent)}</td></tr>`;
+      ui.connectBtn.disabled = false;
+      return;
+    }
+
+    connected = true;
+    ui.refreshBtn.disabled = false;
+    ui.createBtn.disabled = false;
+    ui.createNote.textContent = "Listo. Puedes crear y editar productos.";
+    setConn("ok", "Conectado");
+    toast("Conectado", "Ya tienes acceso al panel.");
+
+    await loadProducts();
+    ui.connectBtn.disabled = false;
+  }
+
+  async function loadProducts(){
+    try{
+      ui.refreshBtn.disabled = true;
+      ui.tbody.innerHTML = `<tr><td colspan="8" class="small">Cargando productos...</td></tr>`;
+      allProducts = await getProducts();
+      ui.lastLoad.textContent = nowStr();
+      render();
+      toast("Actualizado", "Productos cargados.");
+    }catch(e){
+      ui.tbody.innerHTML = `<tr><td colspan="8" class="small">${esc(e.message || "Error al cargar.")}</td></tr>`;
+      toast("Error", e.message || "No se pudo cargar.");
+    }finally{
+      if (connected) ui.refreshBtn.disabled = false;
+    }
+  }
+
+  function validateCreate(){
+    const name = (ui.new_name.value || "").trim();
+    const price = (ui.new_price.value || "").trim();
+    if (!name) return "El nombre es obligatorio.";
+    if (price === "" || Number.isNaN(Number(price))) return "El precio es obligatorio (número).";
+    if (Number(price) < 0) return "El precio no puede ser negativo.";
+    return null;
+  }
+
+  async function createFlow(){
+    const err = validateCreate();
+    if (err){ toast("Revisa", err); return; }
+
+    const payload = {
+      name: ui.new_name.value.trim(),
+      price: Number(ui.new_price.value),
+      category: ui.new_category.value.trim(),
+      description: ui.new_description.value.trim(),
+      image: ui.new_image.value.trim(),
+      active: ui.new_active.value === "true"
+    };
+
+    ui.createBtn.disabled = true;
+    try{
+      await createProduct(payload);
+      toast("Creado", payload.name);
+
+      ui.new_name.value = "";
+      ui.new_price.value = "";
+      ui.new_category.value = "";
+      ui.new_description.value = "";
+      ui.new_image.value = "";
+      ui.new_active.value = "true";
+
+      await loadProducts();
+    }catch(e){
+      toast("Error", e.message || "No se pudo crear.");
+    }finally{
+      ui.createBtn.disabled = false;
+    }
+  }
+
+  async function saveRow(tr){
+    const row = collectRow(tr);
+
+    // validación simple (prevención de errores)
+    if (!row.name.trim()) { toast("Revisa", "El nombre no puede quedar vacío."); return; }
+    if (row.price === null || Number.isNaN(row.price)) { toast("Revisa", "El precio debe ser un número."); return; }
+    if (row.price < 0) { toast("Revisa", "El precio no puede ser negativo."); return; }
+
+    const btnSave = tr.querySelector('[data-action="save"]');
+    btnSave.disabled = true;
+
+    try{
+      await patchProduct(row.id, {
+        name: row.name.trim(),
+        description: row.description.trim(),
+        price: row.price,
+        image: row.image.trim(),
+        category: row.category.trim(),
+        active: row.active
+      });
+      toast("Guardado", "Cambios aplicados.");
+      await loadProducts();
+    }catch(e){
+      toast("Error", e.message || "No se pudo guardar.");
+      refreshRowButtons(tr);
+    }
+  }
+
+  function cancelRow(tr){
+    const id = tr.dataset.id;
+    const orig = originalById.get(id);
+    if (!orig) return;
+
+    tr.querySelector('[data-field="name"]').value = orig.name;
+    tr.querySelector('[data-field="description"]').value = orig.description;
+    tr.querySelector('[data-field="price"]').value = orig.price;
+    tr.querySelector('[data-field="image"]').value = orig.image;
+    tr.querySelector('[data-field="category"]').value = orig.category;
