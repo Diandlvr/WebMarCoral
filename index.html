@@ -2,27 +2,27 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="description" content="Catálogo digital de joyería Mar Coral / Soleil. Collares, aretes, anillos y brazaletes con diseño elegante y contemporáneo. Compra fácil por WhatsApp.">
+  <meta name="description" content="Catálogo digital de joyería Mar Coral / Solea. Collares, aretes, anillos y brazaletes con diseño elegante y contemporáneo. Compra fácil por WhatsApp.">
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <title>Soleil</title>
-  
-<!-- Open Graph (WhatsApp/Facebook) -->
-  <meta property="og:type" content="website">
-<meta property="og:title" content="Mar Coral / Soleil | Joyería">
-<meta property="og:description" content="Catálogo digital de joyería. Compra fácil por WhatsApp.">
-<meta property="og:url" content="https://diandlvr.github.io/WebMarCoral/">
-<meta property="og:image" content="https://diandlvr.github.io/WebMarCoral/img/og.jpg">
+  <title>Solea</title>
 
-<meta property="og:image:secure_url" content="https://diandlvr.github.io/WebMarCoral/img/og.jpg">
-<meta property="og:image:type" content="image/jpeg">
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
-  <!-- Twitter (opcional, sirve igual) -->
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Mar Coral / Solea | Joyería">
+  <meta property="og:description" content="Catálogo digital de joyería. Compra fácil por WhatsApp.">
+  <meta property="og:url" content="https://diandlvr.github.io/WebMarCoral/">
+  <meta property="og:image" content="https://diandlvr.github.io/WebMarCoral/img/og.jpg">
+  <meta property="og:image:secure_url" content="https://diandlvr.github.io/WebMarCoral/img/og.jpg">
+  <meta property="og:image:type" content="image/jpeg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+
+  <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Mar Coral / Soleil | Joyería">
-<meta name="twitter:description" content="Catálogo digital de joyería. Compra fácil por WhatsApp.">
-<meta name="twitter:image" content="https://diandlvr.github.io/WebMarCoral/img/og.jpg">
+  <meta name="twitter:title" content="Mar Coral / Solea | Joyería">
+  <meta name="twitter:description" content="Catálogo digital de joyería. Compra fácil por WhatsApp.">
+  <meta name="twitter:image" content="https://diandlvr.github.io/WebMarCoral/img/og.jpg">
 
   <!-- Fuentes -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -30,450 +30,51 @@
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
   <link rel="icon" href="img/favicon.png" type="image/png">
   <link rel="shortcut icon" href="img/favicon.png">
-
-
-  <style>
-    :root{
-      --bg:#f7f4ee;
-      --card:#ffffff;
-      --text:#111;
-      --muted:rgba(17,17,17,.55);
-      --line:#e7e1d8;
-      --radius:18px;
-      --shadow:0 18px 50px rgba(0,0,0,.06);
-      --max:1180px;
-    }
-
-    *{box-sizing:border-box}
-    body{
-      margin:0;
-      background:var(--bg);
-      color:var(--text);
-      font-family:Inter,system-ui,Arial,sans-serif;
-    }
-    a{text-decoration:none;color:inherit}
-    button,input,select{font:inherit}
-
-    /* Top bar */
-    .topbar{
-      position:sticky;top:0;z-index:50;
-      background:rgba(255,255,255,.75);
-      backdrop-filter:blur(10px);
-      border-bottom:1px solid var(--line);
-      padding:10px;
-      text-align:center;
-      font-size:12px;
-      letter-spacing:.18em;
-      text-transform:uppercase;
-      color:var(--muted);
-    }
-
-    header{
-      max-width:var(--max);
-      margin:auto;
-      padding:18px 16px;
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:16px;
-    }
-
-    .brand{
-      font-family:"Playfair Display",serif;
-      font-size:26px;
-      font-weight:600;
-    }
-
-    .container{
-      max-width:var(--max);
-      margin:auto;
-      padding:0 16px 70px;
-    }
-
-    /* Hero */
-    .hero{
-      display:grid;
-      grid-template-columns:1.2fr .8fr;
-      gap:18px;
-      margin-bottom:18px;
-    }
-    .heroCard{
-      background:rgba(255,255,255,.6);
-      border:1px solid var(--line);
-      border-radius:22px;
-      padding:20px;
-    }
-    .hero h1{
-      font-family:"Playfair Display",serif;
-      font-size:48px;
-      margin:0;
-    }
-    .hero p{color:var(--muted);line-height:1.7}
-
-    .heroAside{
-      background:linear-gradient(135deg,#efe8dc,#fbf8f2);
-      border:1px solid var(--line);
-      border-radius:22px;
-      padding:20px;
-    }
-
-    .btn{
-      padding:10px 14px;
-      border-radius:999px;
-      border:1px solid var(--line);
-      background:#fff;
-      cursor:pointer;
-      font-size:13px;
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      gap:8px;
-    }
-    .btn.primary{
-      background:#111;
-      color:#fff;
-      border-color:#111;
-    }
-
-    /* Search */
-    .searchRow{
-      display:flex;
-      gap:10px;
-      margin:10px 0;
-      align-items:center;
-      flex-wrap:wrap;
-    }
-    .search{
-      flex:1;
-      min-width:240px;
-      background:#fff;
-      border:1px solid var(--line);
-      border-radius:999px;
-      padding:12px 14px;
-    }
-    .search input{
-      border:none;
-      outline:none;
-      width:100%;
-      background:transparent;
-    }
-
-    /* Chips */
-    .chips{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0}
-    .chip{
-      padding:10px 14px;
-      border-radius:999px;
-      border:1px solid var(--line);
-      background:#fff;
-      cursor:pointer;
-      font-size:13px;
-      color:var(--muted);
-    }
-    .chip.active{
-      background:#111;
-      color:#fff;
-      border-color:#111;
-    }
-
-    /* Grid */
-    .section{margin-top:28px}
-    .section h2{
-      font-family:"Playfair Display",serif;
-      font-size:28px;
-      margin-bottom:10px;
-    }
-
-    .grid{
-      display:grid;
-      grid-template-columns:repeat(4,1fr);
-      gap:14px;
-    }
-
-    @media(max-width:900px){.grid{grid-template-columns:repeat(2,1fr)}}
-    @media(max-width:480px){.grid{grid-template-columns:1fr}}
-    @media(max-width:900px){.hero{grid-template-columns:1fr}}
-
-    .card{
-      background:#fff;
-      border:1px solid var(--line);
-      border-radius:var(--radius);
-      overflow:hidden;
-      box-shadow:var(--shadow);
-      display:flex;
-      flex-direction:column;
-    }
-
-    .placeholder{
-      aspect-ratio:4/5;
-      background:linear-gradient(135deg,#efe8dc,#fbf8f2);
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      color:rgba(0,0,0,.3);
-      font-size:12px;
-      letter-spacing:.2em;
-      text-transform:uppercase;
-      font-family:"Playfair Display",serif;
-    }
-
-    .info{padding:14px;display:flex;flex-direction:column;gap:10px}
-    .price{font-weight:500}
-
-    footer{
-      border-top:1px solid var(--line);
-      padding:20px;
-      text-align:center;
-      font-size:13px;
-      color:var(--muted);
-    }
- /* Menu hamburguesa */
-.menu-backdrop{
-  position:fixed; inset:0;
-  background:rgba(0,0,0,.35);
-  opacity:0; pointer-events:none;
-  transition:.25s; z-index:60;
-}
-.menu-backdrop.show{ opacity:1; pointer-events:auto; }
-
-.side-menu{
-  position:fixed; top:0; right:-320px;
-  width:300px; height:100%;
-  background:#fff;
-  border-left:1px solid var(--line);
-  transition:.3s; z-index:70;
-  padding:16px;
-  display:flex; flex-direction:column;
-}
-.side-menu.open{ right:0; }
-
-.side-header{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-bottom:14px;
-}
-
-.side-menu nav{
-  display:flex;
-  flex-direction:column;
-  gap:8px;
-}
-
-.mc-side-item{
-  text-align:left;
-  padding:10px 12px;
-  border-radius:10px;
-  border:1px solid var(--line);
-  background:#fff;
-  cursor:pointer;
-
-}
-
-.hamburger{
-  width:42px;height:42px;
-  border-radius:999px;
-  border:1px solid var(--line);
-  background:#fff;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  cursor:pointer;
-}
-.hamburger span,
-.hamburger span::before,
-.hamburger span::after{
-  content:"";
-  display:block;
-  width:18px;height:2px;
-  background:#111;
-  position:relative;
-}
-.hamburger span::before{position:absolute; top:-6px;}
-.hamburger span::after{position:absolute; top:6px;}
-
-
-.mc-side-item.active{
-  background:#111;
-  color:#fff;
-  border-color:#111;
-}
-
-  /* Mejoras Mobile UX */
-@media (max-width: 640px) {
-  body {
-    -webkit-text-size-adjust: 100%;
-  }
-
-  /* chips desplazables horizontal */
-  #chips {
-    display: flex;
-    gap: 10px;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    padding-bottom: 6px;
-    scroll-snap-type: x mandatory;
-  }
-  #chips::-webkit-scrollbar { display: none; }
-
-  #chips .chip {
-    flex: 0 0 auto;
-    scroll-snap-align: start;
-    white-space: nowrap;
-  }
-
-  /* grid más cómodo en celular */
-  #grid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 12px;
-  }
-}
-
-/* Para pantallas muy pequeñas */
-@media (max-width: 360px) {
-  #grid {
-    grid-template-columns: 1fr;
-  }
-}
-
-.wa-float{
-  position: fixed;
-  right: 14px;
-  bottom: 14px;
-  width: 56px;
-  height: 56px;
-  border-radius: 999px;
-  display: grid;
-  place-items: center;
-  text-decoration: none;
-  font-size: 24px;
-  box-shadow: 0 12px 28px rgba(0,0,0,.25);
-  z-index: 9999;
-  transform: translateY(0);
-  transition: transform 180ms ease, opacity 180ms ease;
-}
-
-.wa-float:active{
-  transform: translateY(1px);
-}
-
-.wa-float{
-  background:#25D366; /* color WhatsApp */
-  color:#fff;
-}
-
-.wa-float svg{
-  width: 26px;
-  height: 26px;
-}
-
-@keyframes wa-pop {
-  0% { transform: scale(.6); opacity:0; }
-  100% { transform: scale(1); opacity:1; }
-}
-
-.wa-float{
-  animation: wa-pop 240ms ease-out;
-}
-
-@media (max-width: 640px) {
-  #chips{
-    display:flex;
-    gap:10px;
-    overflow-x:auto;
-    -webkit-overflow-scrolling: touch;
-    padding: 8px 0;
-    scroll-snap-type:x mandatory;
-  }
-  #chips::-webkit-scrollbar{ display:none; }
-
-  #chips .chip{
-    flex:0 0 auto;
-    white-space:nowrap;
-    scroll-snap-align:start;
-  }
-}
-/* GRID base (desktop) */
-#grid{
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 14px;
-}
-
-/* Tablets */
-@media (max-width: 1024px){
-  #grid{
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-}
-
-/* Celular */
-@media (max-width: 640px){
-  #grid{
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 12px;
-  }
-}
-
-/* Celulares muy pequeños */
-@media (max-width: 360px){
-  #grid{
-    grid-template-columns: 1fr;
-  }
-}
-
-
-.brand img{
-  height: 36px;
-  width: auto;
-  display: block;
-}
-
-/* mobile */
-@media (max-width: 640px){
-  .brand img{
-    height: 32px;
-  }
-}
-
-
-  </style>
+  <link rel="stylesheet" href="./style.css">
 </head>
-<a id="waFloat" class="wa-float" href="#" target="_blank" rel="noopener" aria-label="WhatsApp">
-  <svg viewBox="0 0 32 32" aria-hidden="true">
-    <path fill="currentColor"
-      d="M19.11 17.49c-.27-.14-1.6-.79-1.85-.88-.25-.09-.43-.14-.61.14-.18.27-.7.88-.86 1.06-.16.18-.32.2-.59.07-.27-.14-1.14-.42-2.17-1.33-.8-.71-1.34-1.58-1.5-1.85-.16-.27-.02-.42.12-.56.12-.12.27-.32.41-.48.14-.16.18-.27.27-.45.09-.18.05-.34-.02-.48-.07-.14-.61-1.47-.84-2.02-.22-.53-.45-.46-.61-.47h-.52c-.18 0-.48.07-.73.34-.25.27-.96.93-.96 2.27 0 1.34.98 2.64 1.12 2.82.14.18 1.93 2.95 4.68 4.13.65.28 1.16.45 1.56.58.65.21 1.24.18 1.71.11.52-.08 1.6-.65 1.82-1.28.23-.63.23-1.17.16-1.28-.07-.11-.25-.18-.52-.32z"/>
-    <path fill="currentColor"
-      d="M16.01 2.67c-7.36 0-13.34 5.98-13.34 13.34 0 2.35.61 4.64 1.77 6.66L2 30l7.56-2.35a13.28 13.28 0 0 0 6.45 1.66h.01c7.36 0 13.34-5.98 13.34-13.34S23.37 2.67 16.01 2.67zm0 24.04h-.01a11 11 0 0 1-5.61-1.54l-.4-.24-4.48 1.39 1.46-4.36-.26-.42a10.99 10.99 0 1 1 9.3 5.17z"/>
-  </svg>
-</a>
-
-</a>
 
 <body>
-  <header class="topbar">
-  <div class="brand">
-    <img src="./img/og.jpg" alt="Soleil">
-  </div>
 
-</header>
+  <!-- WhatsApp flotante (SOLO UNA VEZ y dentro del body) -->
+  <a id="waFloat" class="wa-float" href="#" target="_blank" rel="noopener" aria-label="WhatsApp">
+    <svg viewBox="0 0 32 32" aria-hidden="true">
+      <path fill="currentColor"
+        d="M19.11 17.49c-.27-.14-1.6-.79-1.85-.88-.25-.09-.43-.14-.61.14-.18.27-.7.88-.86 1.06-.16.18-.32.2-.59.07-.27-.14-1.14-.42-2.17-1.33-.8-.71-1.34-1.58-1.5-1.85-.16-.27-.02-.42.12-.56.12-.12.27-.32.41-.48.14-.16.18-.27.27-.45.09-.18.05-.34-.02-.48-.07-.14-.61-1.47-.84-2.02-.22-.53-.45-.46-.61-.47h-.52c-.18 0-.48.07-.73.34-.25.27-.96.93-.96 2.27 0 1.34.98 2.64 1.12 2.82.14.18 1.93 2.95 4.68 4.13.65.28 1.16.45 1.56.58.65.21 1.24.18 1.71.11.52-.08 1.6-.65 1.82-1.28.23-.63.23-1.17.16-1.28-.07-.11-.25-.18-.52-.32z"/>
+      <path fill="currentColor"
+        d="M16.01 2.67c-7.36 0-13.34 5.98-13.34 13.34 0 2.35.61 4.64 1.77 6.66L2 30l7.56-2.35a13.28 13.28 0 0 0 6.45 1.66h.01c7.36 0 13.34-5.98 13.34-13.34S23.37 2.67 16.01 2.67zm0 24.04h-.01a11 11 0 0 1-5.61-1.54l-.4-.24-4.48 1.39 1.46-4.36-.26-.42a10.99 10.99 0 1 1 9.3 5.17z"/>
+    </svg>
+  </a>
+
+  <header class="topbar">
+    <div class="brand">
+      <img src="./img/og.jpg" alt="Solea">
+    </div>
+  </header>
 
   <header>
-    <div class="brand">Soleil</div>
-    <button class="hamburger" id="burgerBtn" aria-label="Abrir menú">
-  <span></span>
-</button>
+    <div class="brand">Solea</div>
+
+    <div class="topbar-actions">
+      <button id="cartBtn" class="iconBtn cartBtn" aria-label="Abrir carrito">
+        🛒
+        <span id="cartBadge" class="badge">0</span>
+      </button>
+
+      <button class="hamburger" id="burgerBtn" aria-label="Abrir menú">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
   </header>
+
   <div id="menuBackdrop" class="menu-backdrop"></div>
 
-<aside id="sideMenu" class="side-menu">
-  <div class="side-header">
-    <strong>Categorías</strong>
-    <button id="closeMenuBtn" aria-label="Cerrar menú">✕</button>
-  </div>
-  <nav id="sideCategories"></nav>
-</aside>
-
+  <aside id="sideMenu" class="side-menu">
+    <div class="side-header">
+      <strong>Categorías</strong>
+      <button id="closeMenuBtn" aria-label="Cerrar menú">✕</button>
+    </div>
+    <nav id="sideCategories"></nav>
+  </aside>
 
   <main class="container">
     <section class="hero">
@@ -486,18 +87,17 @@
         <p><strong>Pedidos</strong></p>
         <p>Presiona “Pedir por WhatsApp” y el mensaje se genera automáticamente.</p>
         <a class="btn primary" target="_blank"
-           href="https://wa.me/50767908504?text=Hola%20Soleil%2C%20quiero%20hacer%20una%20consulta">
+           href="https://wa.me/50767908504?text=Hola%20Solea%2C%20quiero%20hacer%20una%20consulta">
           WhatsApp
         </a>
       </div>
     </section>
 
-    <!-- Búsqueda + Orden -->
     <div class="searchRow">
       <div class="search">
         <input id="searchInput" placeholder="Buscar (perla, 11:11, corazón…)" />
       </div>
-        <button id="clearBtn" class="chip" type="button">Limpiar</button>
+      <button id="clearBtn" class="chip" type="button">Limpiar</button>
 
       <select id="sortSelect" class="chip" aria-label="Ordenar productos">
         <option value="default">Ordenar por</option>
@@ -506,12 +106,12 @@
         <option value="name-asc">Nombre: A–Z</option>
         <option value="name-desc">Nombre: Z–A</option>
       </select>
+
       <div style="margin-top:6px; color: rgba(17,17,17,.55); font-size:13px;">
-  <span id="resultsCount"></span>
-</div>
+        <span id="resultsCount"></span>
+      </div>
     </div>
 
-    <!-- Chips de categorías -->
     <div class="chips" id="chips"></div>
 
     <section class="section">
@@ -520,9 +120,43 @@
     </section>
   </main>
 
-  <footer>© Soleil</footer>
+  <footer>© Solea</footer>
 
-  <!-- JS (solo 1) -->
-  <script src="./script.js"></script>
+  <!-- Carrito -->
+  <div id="cartOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:9998"></div>
+
+  <aside id="cartDrawer" style="transform:translateX(110%);transition:transform .25s ease;position:fixed;top:0;right:0;height:100vh;width:360px;max-width:92vw;background:#fff;z-index:9999;border-left:1px solid #eee;display:flex;flex-direction:column">
+    <div style="padding:14px;border-bottom:1px solid #eee;display:flex;align-items:center;justify-content:space-between;gap:10px">
+      <b>Tu carrito</b>
+      <button id="cartClose" style="border:none;background:#f3f4f6;border-radius:10px;padding:8px 10px;cursor:pointer">✕</button>
+    </div>
+
+    <div id="cartItems" style="padding:14px;overflow:auto;flex:1"></div>
+
+    <div style="padding:14px;border-top:1px solid #eee">
+      <div style="display:flex;justify-content:space-between;margin-bottom:10px">
+        <span>Total</span>
+        <b id="cartTotal">$0.00</b>
+      </div>
+
+      <button id="cartWhatsApp" style="width:100%;padding:12px;border:none;border-radius:12px;background:#22c55e;color:#fff;font-weight:700;cursor:pointer">
+        Comprar por WhatsApp
+      </button>
+
+      <button id="cartContinue" class="btn" type="button" style="width:100%;margin-top:8px">
+        Seguir agregando más
+      </button>
+
+      <button id="cartClear" style="width:100%;margin-top:8px;padding:10px;border:1px solid #eee;border-radius:12px;background:#fff;font-weight:700;cursor:pointer">
+        Vaciar carrito
+      </button>
+
+      <div style="margin-top:10px;font-size:12px;color:#6b7280">
+        El carrito se guarda automáticamente en este dispositivo.
+      </div>
+    </div>
+  </aside>
+
+  <script src="./script.js" defer></script>
 </body>
 </html>

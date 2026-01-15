@@ -1,380 +1,463 @@
-const WHATSAPP = "50767908504";
-const wa = (msg) =>
-  "https://wa.me/" + WHATSAPP + "?text=" + encodeURIComponent(msg);
+document.addEventListener("DOMContentLoaded", () => {
+  // =========================
+  // CONFIG
+  // =========================
+  const WHATSAPP = "50767908504";
+  const CART_KEY = "wm_cart_v1";
 
-function updateWaFloatLink() {
-  const waFloat = document.getElementById("waFloat");
-  if (!waFloat) return;
+  // 👇 cambia esto si tu backend está en otro lugar
+  const API_BASE = "http://localhost:3001";
+  const PRODUCTS_ENDPOINT = `${API_BASE}/api/products`;
 
-  const msg =
-    active && active !== "all"
-      ? `Hola 😊 Estoy viendo la categoría "${active}" y quiero pedir.`
-      : "Hola 😊 Quiero ver el catálogo Mar Coral / Soleil y pedir.";
+  const wa = (msg) => "https://wa.me/" + WHATSAPP + "?text=" + encodeURIComponent(msg);
+  const $ = (id) => document.getElementById(id);
 
-  waFloat.href = wa(msg);
-}
+  // =========================
+  // ELEMENTOS UI (CATÁLOGO)
+  // =========================
+  const chips = $("chips");
+  const grid = $("grid");
+  const search = $("searchInput");
+  const sortSelect = $("sortSelect");
+  const clearBtn = $("clearBtn");
+  const resultsCount = $("resultsCount");
 
-const waFloat = document.getElementById("waFloat");
-if (waFloat) {
-  waFloat.href = wa("Hola, Quiero ver el catálogo de Soleil");
-}
+  // Menú lateral
+  const burger = $("burgerBtn");
+  const sideMenu = $("sideMenu");
+  const menuBackdrop = $("menuBackdrop");
+  const closeMenuBtn = $("closeMenuBtn");
+  const sideCategories = $("sideCategories");
 
-// Mapa: menú (singular) -> CSV (plural)
-const CATEGORY_MAP = {
-  collar: "collares",
-  anillo: "anillos",
-  arete: "aretes",
-  brazalete: "brazaletes",
-};
+  // WhatsApp flotante
+  const waFloat = $("waFloat");
 
-let products = [];
-let active = "all";
-(async function init() {
-  try {
-    products = await getProducts(); // ← carga desde CSV
-    renderChips();                  // ← usa products
-    updateWaFloatLink
-  } catch (e) {
-    console.error(e);
-    grid.innerHTML = `<p style="padding:12px">No se pudo cargar el catálogo.</p>`;
-  }
-})();
+  // =========================
+  // ELEMENTOS UI (CARRITO)
+  // =========================
+  const cartBtn = $("cartBtn");
+  const cartBadge = $("cartBadge");
+  const cartOverlay = $("cartOverlay");
+  const cartDrawer = $("cartDrawer");
+  const cartClose = $("cartClose");
+  const cartItems = $("cartItems");
+  const cartTotal = $("cartTotal");
+  const cartWhatsApp = $("cartWhatsApp");
+  const cartClear = $("cartClear");
+  const cartContinue = $("cartContinue");
 
+  // =========================
+  // ESTADO
+  // =========================
+  let products = [];
+  let active = "all";
+  let cart = loadCart();
 
-const chips = document.getElementById("chips");
-const grid = document.getElementById("grid");
-const search = document.getElementById("searchInput");
-const sortSelect = document.getElementById("sortSelect");
-
-// ========= Data layer (Repository) =========
-async function getProducts() {
-  // Hoy: CSV local
-  const res = await fetch("./productos.csv", { cache: "no-store" });
-  if (!res.ok) throw new Error("No se pudo cargar productos.csv");
-  const text = await res.text();
-  return parseCSV(text);
-}
-
-// CSV parser (simple + soporta comillas)
-function parseCSV(csvText) {
-  const lines = csvText.split(/\r?\n/).filter(l => l.trim().length);
-  if (lines.length < 2) return [];
-
-  const headers = splitCSVLine(lines[0]).map(h => h.trim().toLowerCase());
-  const rows = lines.slice(1);
-
-  const items = rows.map(line => {
-    const cols = splitCSVLine(line);
-    const obj = {};
-    headers.forEach((h, i) => (obj[h] = (cols[i] ?? "").trim()));
-
-    // normalización
-    const precioNum = Number(String(obj.precio).replace(/[^\d.]/g, "")) || 0;
-
-    return {
-      producto: obj.producto || obj.nombre || "",
-      descripcion: obj.descripcion || "",
-      precio: precioNum,
-      categoria: (obj.categoria || "otros").toLowerCase(),
-      imagen: obj.imagen || "" // por ahora vacío; después lo usas
-    };
-  });
-
-  return items.filter(p => p.producto);
-}
-
-function splitCSVLine(line) {
-  const out = [];
-  let cur = "";
-  let inQuotes = false;
-
-  for (let i = 0; i < line.length; i++) {
-    const ch = line[i];
-
-    if (ch === '"') {
-      if (inQuotes && line[i + 1] === '"') {
-        cur += '"';
-        i++;
-      } else {
-        inQuotes = !inQuotes;
-      }
-      continue;
-    }
-
-    if (ch === "," && !inQuotes) {
-      out.push(cur);
-      cur = "";
-      continue;
-    }
-    cur += ch;
-  }
-  out.push(cur);
-  return out;
-}
-
-// --- CSV helpers ---
-function parseCSVLine(line) {
-  const out = [];
-  let cur = "";
-  let inQuotes = false;
-
-  for (let i = 0; i < line.length; i++) {
-    const ch = line[i];
-
-    if (ch === '"') {
-      if (inQuotes && line[i + 1] === '"') {
-        cur += '"';
-        i++;
-      } else {
-        inQuotes = !inQuotes;
-      }
-      continue;
-    }
-
-    if (ch === "," && !inQuotes) {
-      out.push(cur.trim());
-      cur = "";
-      continue;
-    }
-
-    cur += ch;
-  }
-
-  out.push(cur.trim());
-  return out;
-}
-
-function toNumberPrice(v) {
-  if (v == null) return 0;
-  const s = String(v).replace(/\$/g, "").replace(/\s/g, "").replace(/,/g, ".");
-  const n = Number(s);
-  return Number.isFinite(n) ? n : 0;
-}
-
-async function loadCSV() {
-  const res = await fetch("./productos.csv", { cache: "no-store" });
-  if (!res.ok) throw new Error("No se pudo cargar productos.csv");
-
-  const text = await res.text();
-  const lines = text
-    .split(/\r?\n/)
-    .map((l) => l.trim())
-    .filter(Boolean);
-
-  if (lines.length < 2) return [];
-
-  const headers = parseCSVLine(lines[0]).map((h) => h.toLowerCase());
-  const idx = {
-    producto: headers.indexOf("producto"),
-    descripcion: headers.indexOf("descripcion"),
-    precio: headers.indexOf("precio"),
-    imagen: headers.indexOf("imagen"),
-    categoria: headers.indexOf("categoria"),
+  // Labels en plural
+  const CATEGORY_LABELS = {
+    arete: "Aretes",
+    aretes: "Aretes",
+    anillo: "Anillos",
+    anillos: "Anillos",
+    collar: "Collares",
+    collares: "Collares",
+    brazalete: "Brazaletes",
+    brazaletes: "Brazaletes",
+    all: "Todo",
   };
 
-  const items = [];
-  for (let i = 1; i < lines.length; i++) {
-    const cols = parseCSVLine(lines[i]);
-
-    const name = cols[idx.producto] ?? "";
-    const desc = cols[idx.descripcion] ?? "";
-    const priceRaw = cols[idx.precio] ?? "";
-    const img = cols[idx.imagen] ?? "";
-    const category = (cols[idx.categoria] ?? "").toLowerCase().trim();
-
-    if (!name && !desc && !priceRaw && !img && !category) continue;
-
-    items.push({
-      id: `${category || "sin-cat"}-${name}`
-        .toLowerCase()
-        .replace(/\s+/g, "-"),
-      name,
-      desc,
-      price: toNumberPrice(priceRaw),
-      image: img,
-      category: category || "sin-categoria",
-    });
+  // Normaliza categorías (singular/plural)
+  function normalizeCategory(c) {
+    const x = String(c || "").toLowerCase().trim();
+    if (!x) return "sin-categoria";
+    if (x === "arete") return "aretes";
+    if (x === "anillo") return "anillos";
+    if (x === "collar") return "collares";
+    if (x === "brazalete") return "brazaletes";
+    return x;
   }
 
-  return items;
-}
-function animateGrid() {
-  grid.style.opacity = "0";
-  grid.style.transform = "translateY(6px)";
-  grid.style.transition = "opacity 180ms ease, transform 180ms ease";
-  requestAnimationFrame(() => {
-    grid.style.opacity = "1";
-    grid.style.transform = "translateY(0)";
-  });
-}
-
-// --- UI ---
-function renderChips() {
-  const set = new Set(products.map((p) => p.category));
-  const cats = ["all", ...Array.from(set).sort()];
- 
-
-  chips.innerHTML = cats
-    .map(
-      (c) => `
-      <button class="chip ${active === c ? "active" : ""}" data-c="${c}">
-        ${c === "all" ? "Todo" : c}
-      </button>`
-    )
-    .join("");
-
-  chips.querySelectorAll("button").forEach((b) => {
-    b.onclick = () => {
-      active = b.dataset.c;
-      render();
-    };
-  });
-}
-
-function render() {
-  let list = [...products];
-
-  // filtro por categoría
-  if (active !== "all") {
-    list = list.filter((p) => p.category === active);
+  // =========================
+  // HELPERS
+  // =========================
+  function escapeHtml(str) {
+    return String(str ?? "")
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
   }
 
-  // búsqueda
-  const q = (search.value || "").toLowerCase().trim();
-  if (q) {
-    list = list.filter((p) =>
-      (`${p.name} ${p.desc}`).toLowerCase().includes(q)
-    );
+  function money(n) {
+    return "$" + Number(n || 0).toFixed(2);
   }
 
-  // orden
-  const sort = sortSelect.value;
-  if (sort === "price-asc") list.sort((a, b) => a.price - b.price);
-  if (sort === "price-desc") list.sort((a, b) => b.price - a.price);
-  if (sort === "name-asc") list.sort((a, b) => a.name.localeCompare(b.name));
-  if (sort === "name-desc") list.sort((a, b) => b.name.localeCompare(a.name));
-
-  // contador
-  const resultsCount = document.getElementById("resultsCount");
-  if (resultsCount) resultsCount.textContent = `${list.length} producto(s)`;
-
-  // vacío
-  if (list.length === 0) {
-    grid.innerHTML = `<div style="padding:14px; color:rgba(17,17,17,.55);">No se encontraron productos.</div>`;
-
-    return;
+  function saveCart() {
+    localStorage.setItem(CART_KEY, JSON.stringify(cart));
   }
 
-  // render cards
-  grid.innerHTML = list
-    .map(
-      (p) => `
-      <div class="card">
-        <div class="placeholder">Soleil</div>
-        <div class="info">
-          <strong>${escapeHtml(p.name)}</strong>
-          <span class="price">$${p.price.toFixed(2)}</span>
-          <a class="btn primary" target="_blank"
-             href="${wa(`Hola Soleil, quiero pedir: ${p.name} - $${p.price.toFixed(2)}`)}">
-            Pedir por WhatsApp
-          </a>
-        </div>
-      </div>
-    `
-    )
-    .join("");
-     animateGrid();
-}
+  function loadCart() {
+    try {
+      return JSON.parse(localStorage.getItem(CART_KEY)) || [];
+    } catch {
+      return [];
+    }
+  }
 
-function escapeHtml(str) {
-  return String(str ?? "")
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
-}
+  function updateWaFloatLink() {
+    if (!waFloat) return;
 
-async function init() {
-  // menú hamburguesa (decláralo una vez)
-  const burger = document.getElementById("burgerBtn");
-  const side = document.getElementById("sideMenu");
-  const backdrop = document.getElementById("menuBackdrop");
-  const closeBtn = document.getElementById("closeMenuBtn");
-  const sideCats = document.getElementById("sideCategories");
+    const label = CATEGORY_LABELS[active] || active;
+    const msg =
+      active && active !== "all"
+        ? `Hola 😊 Estoy viendo la categoría "${label}" y quiero pedir.`
+        : "Hola 😊 Quiero ver el catálogo Solea y pedir.";
 
+    waFloat.href = wa(msg);
+  }
+
+  // =========================
+  // MENÚ
+  // =========================
   function openMenu() {
-    if (!side || !backdrop) return;
-    side.classList.add("open");
-    backdrop.classList.add("show");
+    if (!sideMenu || !menuBackdrop) return;
+    sideMenu.classList.add("open");
+    menuBackdrop.classList.add("show");
+    document.body.classList.add("menu-open");
     document.body.style.overflow = "hidden";
   }
 
   function closeMenu() {
-    if (!side || !backdrop) return;
-    side.classList.remove("open");
-    backdrop.classList.remove("show");
+    if (!sideMenu || !menuBackdrop) return;
+    sideMenu.classList.remove("open");
+    menuBackdrop.classList.remove("show");
+    document.body.classList.remove("menu-open");
     document.body.style.overflow = "";
   }
 
-  if (burger) burger.addEventListener("click", openMenu);
-  if (backdrop) backdrop.addEventListener("click", closeMenu);
-  if (closeBtn) closeBtn.addEventListener("click", closeMenu);
-
+  burger?.addEventListener("click", openMenu);
+  menuBackdrop?.addEventListener("click", closeMenu);
+  closeMenuBtn?.addEventListener("click", closeMenu);
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape") closeMenu();
   });
 
-  try {
-    products = await loadCSV();
+  // =========================
+  // CARRITO (OPEN/CLOSE)
+  // =========================
+  function openCart() {
+    if (!cartOverlay || !cartDrawer) return;
+    cartOverlay.style.display = "block";
+    cartDrawer.style.transform = "translateX(0)";
+    closeMenu();
+  }
+
+  function closeCart() {
+    if (!cartOverlay || !cartDrawer) return;
+    cartOverlay.style.display = "none";
+    cartDrawer.style.transform = "translateX(110%)";
+  }
+
+  cartBtn?.addEventListener("click", (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    openCart();
+  });
+
+  cartClose?.addEventListener("click", closeCart);
+  cartOverlay?.addEventListener("click", closeCart);
+  cartContinue?.addEventListener("click", closeCart);
+
+  // Vaciar sin confirm
+  cartClear?.addEventListener("click", () => {
+    if (cart.length === 0) return;
+    cart = [];
+    saveCart();
+    renderCart();
+  });
+
+  // =========================
+  // API -> PRODUCTS
+  // =========================
+  async function fetchProducts() {
+    const res = await fetch(PRODUCTS_ENDPOINT, { cache: "no-store" });
+    if (!res.ok) throw new Error("No se pudo cargar productos desde la API");
+
+    const data = await res.json();
+
+    // Adapta aquí según tu backend/Supabase
+    return (Array.isArray(data) ? data : []).map((p) => {
+      const id = p.id ?? p.uuid ?? p.product_id ?? `${p.name || p.producto}-${p.price || p.precio}`;
+      const name = p.name ?? p.producto ?? "";
+      const desc = p.description ?? p.descripcion ?? "";
+      const price = Number(p.price ?? p.precio) || 0;
+      const image = p.image_url ?? p.imagen ?? "";
+      const category = normalizeCategory(p.category ?? p.categoria ?? "");
+
+      return { id, name, desc, price, image, category };
+    }).filter(p => p.name);
+  }
+
+  // =========================
+  // UI: CHIPS + GRID
+  // =========================
+  function renderChips() {
+    if (!chips) return;
+
+    const set = new Set(products.map((p) => p.category).filter(Boolean));
+    set.delete("sin-categoria");
+
+    const cats = ["all", ...Array.from(set).sort()];
+
+    chips.innerHTML = cats
+      .map((c) => {
+        const label = CATEGORY_LABELS[c] || c;
+        return `<button class="chip ${active === c ? "active" : ""}" data-c="${c}">
+          ${c === "all" ? "Todo" : label}
+        </button>`;
+      })
+      .join("");
+
+    chips.querySelectorAll("button").forEach((b) => {
+      b.onclick = () => {
+        active = b.dataset.c;
+        render();
+        updateWaFloatLink();
+      };
+    });
+  }
+
+  function renderSideCategories() {
+    if (!sideCategories) return;
+
+    const cats = ["aretes", "anillos", "collares", "brazaletes"];
+    sideCategories.innerHTML = cats
+      .map((c) => `<button type="button" class="mc-side-item" data-c="${c}">${CATEGORY_LABELS[c] || c}</button>`)
+      .join("");
+
+    sideCategories.addEventListener("click", (e) => {
+      const btn = e.target.closest("[data-c]");
+      if (!btn) return;
+
+      active = btn.dataset.c;
+      renderChips();
+      render();
+      updateWaFloatLink();
+      closeMenu();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+  }
+
+  function animateGrid() {
+    if (!grid) return;
+    grid.style.opacity = "0";
+    grid.style.transform = "translateY(6px)";
+    grid.style.transition = "opacity 180ms ease, transform 180ms ease";
+    requestAnimationFrame(() => {
+      grid.style.opacity = "1";
+      grid.style.transform = "translateY(0)";
+    });
+  }
+
+  function render() {
+    if (!grid) return;
+
+    let list = [...products];
+
+    // filtro por categoría
+    if (active !== "all") list = list.filter((p) => p.category === active);
+
+    // búsqueda
+    const q = (search?.value || "").toLowerCase().trim();
+    if (q) list = list.filter((p) => (`${p.name} ${p.desc}`).toLowerCase().includes(q));
+
+    // orden
+    const sort = sortSelect?.value || "default";
+    if (sort === "price-asc") list.sort((a, b) => a.price - b.price);
+    if (sort === "price-desc") list.sort((a, b) => b.price - a.price);
+    if (sort === "name-asc") list.sort((a, b) => a.name.localeCompare(b.name));
+    if (sort === "name-desc") list.sort((a, b) => b.name.localeCompare(a.name));
+
+    // contador
+    if (resultsCount) resultsCount.textContent = `${list.length} producto(s)`;
+
+    // vacío
+    if (list.length === 0) {
+      grid.innerHTML = `<div style="padding:14px; color:rgba(17,17,17,.55);">No se encontraron productos.</div>`;
+      return;
+    }
+
+    // render cards
+    grid.innerHTML = list
+      .map((p) => `
+        <div class="card">
+          <div class="placeholder">Solea</div>
+          <div class="info">
+            <strong>${escapeHtml(p.name)}</strong>
+            <span class="price">${money(p.price)}</span>
+
+            <button class="btn primary" type="button"
+              data-add
+              data-id="${escapeHtml(p.id)}"
+              data-name="${escapeHtml(p.name)}"
+              data-price="${Number(p.price) || 0}"
+              data-image="${escapeHtml(p.image || "")}">
+              Agregar al carrito
+            </button>
+          </div>
+        </div>
+      `)
+      .join("");
+
+    animateGrid();
+  }
+
+  // Delegación click en grid -> addToCart
+  grid?.addEventListener("click", (e) => {
+    const btn = e.target.closest("button[data-add]");
+    if (!btn) return;
+
+    addToCart({
+      id: btn.dataset.id,
+      name: btn.dataset.name,
+      price: Number(btn.dataset.price) || 0,
+      image: btn.dataset.image || "",
+    });
+  });
+
+  clearBtn?.addEventListener("click", () => {
+    active = "all";
+    if (search) search.value = "";
+    if (sortSelect) sortSelect.value = "default";
     renderChips();
     render();
+    updateWaFloatLink();
+  });
 
-    // Botón limpiar filtros
-    const clearBtn = document.getElementById("clearBtn");
-    if (clearBtn) {
-      clearBtn.addEventListener("click", () => {
-        active = "all";
-        search.value = "";
-        sortSelect.value = "default";
-        renderChips();
-        render();
-      });
-    }
+  search?.addEventListener("input", () => {
+    render();
+    updateWaFloatLink();
+  });
 
-    search.addEventListener("input", render);
-    sortSelect.addEventListener("change", render);
+  sortSelect?.addEventListener("change", render);
 
-    // categorías dentro del menú
-    if (sideCats) {
-      const cats = ["arete", "anillo", "collar", "brazalete"];
-      sideCats.innerHTML = cats
-        .map((c) => `<button type="button" class="mc-side-item" data-c="${c}">${c}</button>`)
-        .join("");
-
-      sideCats.addEventListener("click", (e) => {
-        const btn = e.target.closest("[data-c]");
-        if (!btn) return;
-
-        const c = btn.dataset.c;
-        const mapped = CATEGORY_MAP[c] || c;
-
-        // Si el CSV NO tiene esa categoría, no forzamos 0:
-        // (ej: CSV ya viene en singular)
-        const exists = products.some((p) => p.category === mapped);
-        active = exists ? mapped : c;
-
-        renderChips();
-        render();
-        closeMenu();
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      });
-    }
-  } catch (e) {
-    console.error(e);
-    grid.innerHTML = `<div style="padding:14px;color:#b00020;">Error cargando productos.csv</div>`;
+  // =========================
+  // CARRITO: RENDER + ACCIONES
+  // =========================
+  function setBadge() {
+    if (!cartBadge) return;
+    const qty = cart.reduce((a, i) => a + (i.qty || 0), 0);
+    cartBadge.style.display = qty > 0 ? "inline-block" : "none";
+    cartBadge.textContent = qty > 0 ? qty : "";
   }
-}
 
-document.addEventListener("DOMContentLoaded", init);
+  function getTotal() {
+    return cart.reduce((sum, i) => sum + (Number(i.price) || 0) * (i.qty || 0), 0);
+  }
 
+  function renderCart() {
+    if (!cartItems || !cartTotal) return;
+
+    if (cart.length === 0) {
+      cartItems.innerHTML = `<div style="color:#6b7280">Tu carrito está vacío.</div>`;
+      cartTotal.textContent = money(0);
+      setBadge();
+      return;
+    }
+
+    cartItems.innerHTML = cart
+      .map(
+        (item) => `
+        <div style="display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:1px solid #f1f5f9">
+          <img src="${item.image || ""}" alt="" style="width:52px;height:52px;border-radius:10px;object-fit:cover;background:#f3f4f6" onerror="this.style.display='none'">
+          <div style="flex:1">
+            <b style="display:block;margin-bottom:4px">${escapeHtml(item.name)}</b>
+            <div style="color:#6b7280;font-size:12px">${money(item.price)} c/u</div>
+
+            <div style="display:flex;align-items:center;gap:8px;margin-top:8px">
+              <button data-act="dec" data-id="${escapeHtml(item.id)}" style="padding:6px 10px;border-radius:10px;border:1px solid #e5e7eb;background:#fff;cursor:pointer">-</button>
+              <b>${item.qty}</b>
+              <button data-act="inc" data-id="${escapeHtml(item.id)}" style="padding:6px 10px;border-radius:10px;border:1px solid #e5e7eb;background:#fff;cursor:pointer">+</button>
+
+              <button data-act="rm" data-id="${escapeHtml(item.id)}" style="margin-left:auto;padding:6px 10px;border-radius:10px;border:1px solid #fee2e2;background:#fff;color:#dc2626;cursor:pointer">Quitar</button>
+            </div>
+          </div>
+        </div>
+      `
+      )
+      .join("");
+
+    cartTotal.textContent = money(getTotal());
+    setBadge();
+  }
+
+  cartItems?.addEventListener("click", (e) => {
+    const btn = e.target.closest("button");
+    if (!btn) return;
+
+    const id = btn.getAttribute("data-id");
+    const act = btn.getAttribute("data-act");
+    const idx = cart.findIndex((i) => String(i.id) === String(id));
+    if (idx < 0) return;
+
+    if (act === "inc") cart[idx].qty += 1;
+    if (act === "dec") cart[idx].qty = Math.max(1, cart[idx].qty - 1);
+    if (act === "rm") cart.splice(idx, 1);
+
+    saveCart();
+    renderCart();
+  });
+
+  cartWhatsApp?.addEventListener("click", () => {
+    if (cart.length === 0) {
+      alert("Tu carrito está vacío.");
+      return;
+    }
+
+    const lines = cart.map((i) => `• ${i.name} x${i.qty} — ${money(i.price)}`);
+    const total = money(getTotal());
+    const msg =
+`Hola, quiero hacer un pedido:
+${lines.join("\n")}
+
+Total: ${total}
+¿Me confirmas disponibilidad y método de entrega?`;
+
+    window.open(wa(msg), "_blank");
+  });
+
+  function addToCart(product) {
+    const id = product.id;
+    const idx = cart.findIndex((i) => String(i.id) === String(id));
+
+    if (idx >= 0) cart[idx].qty += 1;
+    else cart.push({ id, name: product.name, price: Number(product.price) || 0, image: product.image || "", qty: 1 });
+
+    saveCart();
+    renderCart();
+    openCart();
+  }
+
+  // Exponer por si lo llamas desde otro lado
+  window.addToCart = addToCart;
+
+  // =========================
+  // INIT FINAL
+  // =========================
+  (async function boot() {
+    try {
+      products = await fetchProducts();
+      products = products.map(p => ({ ...p, category: normalizeCategory(p.category) }));
+
+      renderSideCategories();
+      renderChips();
+      render();
+      updateWaFloatLink();
+      renderCart();
+    } catch (e) {
+      console.error(e);
+      if (grid) grid.innerHTML = `<div style="padding:14px;color:#b00020;">Error cargando productos (API).</div>`;
+    }
+  })();
+});

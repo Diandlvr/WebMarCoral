@@ -1,0 +1,506 @@
+body{ outline: 6px solid red !important; }
+
+    :root{
+      --bg:#f7f4ee;
+      --card:#ffffff;
+      --text:#111;
+      --muted:rgba(17,17,17,.55);
+      --line:#e7e1d8;
+      --radius:18px;
+      --shadow:0 18px 50px rgba(0,0,0,.06);
+      --max:1180px;
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      background:var(--bg);
+      color:var(--text);
+      font-family:Inter,system-ui,Arial,sans-serif;
+    }
+    a{text-decoration:none;color:inherit}
+    button,input,select{font:inherit}
+
+    /* Top bar */
+    .topbar{
+      position:sticky;top:0;z-index:50;
+      background:rgba(255,255,255,.75);
+      backdrop-filter:blur(10px);
+      border-bottom:1px solid var(--line);
+      padding:10px;
+      text-align:center;
+      font-size:12px;
+      letter-spacing:.18em;
+      text-transform:uppercase;
+      color:var(--muted);
+    }
+
+    header{
+      max-width:var(--max);
+      margin:auto;
+      padding:18px 16px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:16px;
+    }
+
+    .brand{
+      font-family:"Playfair Display",serif;
+      font-size:26px;
+      font-weight:600;
+    }
+
+    .container{
+      max-width:var(--max);
+      margin:auto;
+      padding:0 16px 70px;
+    }
+
+    /* Hero */
+    .hero{
+      display:grid;
+      grid-template-columns:1.2fr .8fr;
+      gap:18px;
+      margin-bottom:18px;
+    }
+    .heroCard{
+      background:rgba(255,255,255,.6);
+      border:1px solid var(--line);
+      border-radius:22px;
+      padding:20px;
+    }
+    .hero h1{
+      font-family:"Playfair Display",serif;
+      font-size:48px;
+      margin:0;
+    }
+    .hero p{color:var(--muted);line-height:1.7}
+
+    .heroAside{
+      background:linear-gradient(135deg,#efe8dc,#fbf8f2);
+      border:1px solid var(--line);
+      border-radius:22px;
+      padding:20px;
+    }
+
+    .btn{
+      padding:10px 14px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background:#fff;
+      cursor:pointer;
+      font-size:13px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+    }
+    .btn.primary{
+      background:#111;
+      color:#fff;
+      border-color:#111;
+    }
+
+    /* Search */
+    .searchRow{
+      display:flex;
+      gap:10px;
+      margin:10px 0;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+    .search{
+      flex:1;
+      min-width:240px;
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:999px;
+      padding:12px 14px;
+    }
+    .search input{
+      border:none;
+      outline:none;
+      width:100%;
+      background:transparent;
+    }
+
+    /* Chips */
+    .chips{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0}
+    .chip{
+      padding:10px 14px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background:#fff;
+      cursor:pointer;
+      font-size:13px;
+      color:var(--muted);
+    }
+    .chip.active{
+      background:#111;
+      color:#fff;
+      border-color:#111;
+    }
+
+    /* Grid */
+    .section{margin-top:28px}
+    .section h2{
+      font-family:"Playfair Display",serif;
+      font-size:28px;
+      margin-bottom:10px;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:14px;
+    }
+
+    @media(max-width:900px){.grid{grid-template-columns:repeat(2,1fr)}}
+    @media(max-width:480px){.grid{grid-template-columns:1fr}}
+    @media(max-width:900px){.hero{grid-template-columns:1fr}}
+
+    .card{
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      overflow:hidden;
+      box-shadow:var(--shadow);
+      display:flex;
+      flex-direction:column;
+    }
+
+    .placeholder{
+      aspect-ratio:4/5;
+      background:linear-gradient(135deg,#efe8dc,#fbf8f2);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:rgba(0,0,0,.3);
+      font-size:12px;
+      letter-spacing:.2em;
+      text-transform:uppercase;
+      font-family:"Playfair Display",serif;
+    }
+
+    .info{padding:14px;display:flex;flex-direction:column;gap:10px}
+    .price{font-weight:500}
+
+    footer{
+      border-top:1px solid var(--line);
+      padding:20px;
+      text-align:center;
+      font-size:13px;
+      color:var(--muted);
+    }
+ /* Menu hamburguesa */
+.menu-backdrop{
+  position:fixed; inset:0;
+  background:rgba(0,0,0,.35);
+  opacity:0; pointer-events:none;
+  transition:.25s; z-index:60;
+}
+.menu-backdrop.show{ opacity:1; pointer-events:auto; }
+
+.side-menu{
+  position:fixed; top:0; right:-320px;
+  width:300px; height:100%;
+  background:#fff;
+  border-left:1px solid var(--line);
+  transition:.3s; z-index:70;
+  padding:16px;
+  display:flex; flex-direction:column;
+}
+.side-menu.open{ right:0; }
+
+.side-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:14px;
+}
+
+.side-menu nav{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
+.mc-side-item{
+  text-align:left;
+  padding:10px 12px;
+  border-radius:10px;
+  border:1px solid var(--line);
+  background:#fff;
+  cursor:pointer;
+
+}
+
+body.menu-open .topbar-actions{
+  visibility: hidden;
+}
+
+
+/* Botón hamburguesa estilo minimal (igual al carrito) */
+.hamburger{
+  background: transparent;
+  border: none;
+  padding: 6px;
+  cursor: pointer;
+  display: inline-flex;
+  flex-direction: column;
+  gap: 5px;
+  align-items: center;
+  justify-content: center;
+}
+
+.hamburger:hover{
+  opacity: .7;
+}
+
+/* Las 3 rayas IGUALES */
+.hamburger span{
+  display: block;
+  width: 22px;
+  height: 2px;              /*  mismo grosor */
+  min-height: 2px;          /*  fuerza igualdad */
+  background-color: #111;   /*  mismo color */
+  border-radius: 999px;
+  line-height: 2px;         /*  evita diferencias */
+  transform: none !important;
+}
+
+
+
+
+
+
+.mc-side-item.active{
+  background:#111;
+  color:#fff;
+  border-color:#111;
+}
+
+  /* Mejoras Mobile UX */
+@media (max-width: 640px) {
+  body {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  /* chips desplazables horizontal */
+  #chips {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 6px;
+    scroll-snap-type: x mandatory;
+  }
+  #chips::-webkit-scrollbar { display: none; }
+
+  #chips .chip {
+    flex: 0 0 auto;
+    scroll-snap-align: start;
+    white-space: nowrap;
+  }
+
+  /* grid más cómodo en celular */
+  #grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+}
+
+/* Para pantallas muy pequeñas */
+@media (max-width: 360px) {
+  #grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.wa-float{
+  position: fixed;
+  right: 14px;
+  bottom: 14px;
+  width: 56px;
+  height: 56px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  text-decoration: none;
+  font-size: 24px;
+  box-shadow: 0 12px 28px rgba(0,0,0,.25);
+  z-index: 9999;
+  transform: translateY(0);
+  transition: transform 180ms ease, opacity 180ms ease;
+}
+
+.wa-float:active{
+  transform: translateY(1px);
+}
+
+.wa-float{
+  background:#25D366; /* color WhatsApp */
+  color:#fff;
+}
+
+.wa-float svg{
+  width: 26px;
+  height: 26px;
+}
+
+@keyframes wa-pop {
+  0% { transform: scale(.6); opacity:0; }
+  100% { transform: scale(1); opacity:1; }
+}
+
+.wa-float{
+  animation: wa-pop 240ms ease-out;
+}
+
+@media (max-width: 640px) {
+  #chips{
+    display:flex;
+    gap:10px;
+    overflow-x:auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 8px 0;
+    scroll-snap-type:x mandatory;
+  }
+  #chips::-webkit-scrollbar{ display:none; }
+
+  #chips .chip{
+    flex:0 0 auto;
+    white-space:nowrap;
+    scroll-snap-align:start;
+  }
+}
+/* GRID base (desktop) */
+#grid{
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+}
+
+/* Tablets */
+@media (max-width: 1024px){
+  #grid{
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+/* Celular */
+@media (max-width: 640px){
+  #grid{
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+}
+
+/* Celulares muy pequeños */
+@media (max-width: 360px){
+  #grid{
+    grid-template-columns: 1fr;
+  }
+}
+
+
+.brand img{
+  height: 36px;
+  width: auto;
+  display: block;
+}
+
+/* mobile */
+@media (max-width: 640px){
+  .brand img{
+    height: 32px;
+  }
+}
+
+header {
+  position: relative;
+  z-index: 1000;
+}
+
+.menu-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.35);
+  display: none;        /* 🔑 clave */
+  z-index: 900;
+}
+
+.menu-backdrop.show {
+  display: block;
+}
+
+.side-menu {
+  z-index: 950;
+}
+
+#cartOverlay {
+  z-index: 1999;
+}
+
+#cartDrawer {
+  z-index: 2000;
+}
+
+#menuBackdrop{
+  display:none;
+  pointer-events:none; /* 🔑 NO bloquea clicks nunca si no está abierto */
+}
+
+#menuBackdrop.show{
+  display:block;
+  pointer-events:auto; /* solo bloquea cuando el menú está abierto */
+  position:fixed;
+  inset:0;
+  z-index:900;
+}
+
+header{
+  position:relative;
+  z-index:1000; /* header por encima del backdrop */
+}
+
+.topbar-actions{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.cartBtn{
+  background:transparent;
+  border:none;
+  padding:6px;
+  cursor:pointer;
+  position:relative;
+  font-size:18px;
+  color:#111;
+}
+
+.cartBtn:hover{
+  opacity:.7;
+}
+
+.badge{
+  position:absolute;
+  top:-4px;
+  right:-6px;
+  background:#ff4fa3;
+  color:#fff;
+  border-radius:999px;
+  padding:2px 6px;
+  font-size:11px;
+  display:none;
+}
+
+#cartContinue{
+  width: 100%;
+  margin: 12px 0;
+}
+
+
