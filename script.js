@@ -5,11 +5,16 @@ document.addEventListener("DOMContentLoaded", () => {
   const WHATSAPP = "50767908504";
   const CART_KEY = "wm_cart_v1";
 
-  // 👇 cambia esto si tu backend está en otro lugar
-  const API_BASE = "http://localhost:3001";
+  // ✅ API BASE automático (LOCAL vs PRODUCCIÓN)
+  const API_BASE =
+    location.hostname === "localhost" || location.hostname === "127.0.0.1"
+      ? "http://localhost:3001"
+      : "https://webmarcoral.onrender.com"; // 👈 aquí va tu backend ya deployado
+
   const PRODUCTS_ENDPOINT = `${API_BASE}/api/products`;
 
-  const wa = (msg) => "https://wa.me/" + WHATSAPP + "?text=" + encodeURIComponent(msg);
+  const wa = (msg) =>
+    "https://wa.me/" + WHATSAPP + "?text=" + encodeURIComponent(msg);
   const $ = (id) => document.getElementById(id);
 
   // =========================
@@ -89,8 +94,10 @@ document.addEventListener("DOMContentLoaded", () => {
       .replaceAll("'", "&#039;");
   }
 
-  function money(n) {
-    return "$" + Number(n || 0).toFixed(2);
+  // ✅ money robusto (evita NaN => $0.00)
+  function money(v) {
+    const n = Number(v);
+    return "$" + (Number.isFinite(n) ? n.toFixed(2) : "0.00");
   }
 
   function saveCart() {
@@ -182,21 +189,31 @@ document.addEventListener("DOMContentLoaded", () => {
   // =========================
   async function fetchProducts() {
     const res = await fetch(PRODUCTS_ENDPOINT, { cache: "no-store" });
-    if (!res.ok) throw new Error("No se pudo cargar productos desde la API");
+    if (!res.ok) {
+      throw new Error(
+        `No se pudo cargar productos desde la API (${res.status}). URL: ${PRODUCTS_ENDPOINT}`
+      );
+    }
 
     const data = await res.json();
 
     // Adapta aquí según tu backend/Supabase
-    return (Array.isArray(data) ? data : []).map((p) => {
-      const id = p.id ?? p.uuid ?? p.product_id ?? `${p.name || p.producto}-${p.price || p.precio}`;
-      const name = p.name ?? p.producto ?? "";
-      const desc = p.description ?? p.descripcion ?? "";
-      const price = Number(p.price ?? p.precio) || 0;
-      const image = p.image_url ?? p.imagen ?? "";
-      const category = normalizeCategory(p.category ?? p.categoria ?? "");
+    return (Array.isArray(data) ? data : [])
+      .map((p) => {
+        const id =
+          p.id ??
+          p.uuid ??
+          p.product_id ??
+          `${p.name || p.producto}-${p.price || p.precio}`;
+        const name = p.name ?? p.producto ?? "";
+        const desc = p.description ?? p.descripcion ?? "";
+        const price = Number(p.price ?? p.precio) || 0;
+        const image = p.image_url ?? p.imagen ?? "";
+        const category = normalizeCategory(p.category ?? p.categoria ?? "");
 
-      return { id, name, desc, price, image, category };
-    }).filter(p => p.name);
+        return { id, name, desc, price, image, category };
+      })
+      .filter((p) => p.name);
   }
 
   // =========================
@@ -213,7 +230,9 @@ document.addEventListener("DOMContentLoaded", () => {
     chips.innerHTML = cats
       .map((c) => {
         const label = CATEGORY_LABELS[c] || c;
-        return `<button class="chip ${active === c ? "active" : ""}" data-c="${c}">
+        return `<button class="chip ${
+          active === c ? "active" : ""
+        }" data-c="${c}">
           ${c === "all" ? "Todo" : label}
         </button>`;
       })
@@ -233,7 +252,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const cats = ["aretes", "anillos", "collares", "brazaletes"];
     sideCategories.innerHTML = cats
-      .map((c) => `<button type="button" class="mc-side-item" data-c="${c}">${CATEGORY_LABELS[c] || c}</button>`)
+      .map(
+        (c) =>
+          `<button type="button" class="mc-side-item" data-c="${c}">${
+            CATEGORY_LABELS[c] || c
+          }</button>`
+      )
       .join("");
 
     sideCategories.addEventListener("click", (e) => {
@@ -270,7 +294,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // búsqueda
     const q = (search?.value || "").toLowerCase().trim();
-    if (q) list = list.filter((p) => (`${p.name} ${p.desc}`).toLowerCase().includes(q));
+    if (q)
+      list = list.filter((p) =>
+        (`${p.name} ${p.desc}`).toLowerCase().includes(q)
+      );
 
     // orden
     const sort = sortSelect?.value || "default";
@@ -290,7 +317,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // render cards
     grid.innerHTML = list
-      .map((p) => `
+      .map(
+        (p) => `
         <div class="card">
           <div class="placeholder">Solea</div>
           <div class="info">
@@ -307,7 +335,8 @@ document.addEventListener("DOMContentLoaded", () => {
             </button>
           </div>
         </div>
-      `)
+      `
+      )
       .join("");
 
     animateGrid();
@@ -353,7 +382,10 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function getTotal() {
-    return cart.reduce((sum, i) => sum + (Number(i.price) || 0) * (i.qty || 0), 0);
+    return cart.reduce(
+      (sum, i) => sum + (Number(i.price) || 0) * (i.qty || 0),
+      0
+    );
   }
 
   function renderCart() {
@@ -372,15 +404,25 @@ document.addEventListener("DOMContentLoaded", () => {
         <div style="display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:1px solid #f1f5f9">
           <img src="${item.image || ""}" alt="" style="width:52px;height:52px;border-radius:10px;object-fit:cover;background:#f3f4f6" onerror="this.style.display='none'">
           <div style="flex:1">
-            <b style="display:block;margin-bottom:4px">${escapeHtml(item.name)}</b>
-            <div style="color:#6b7280;font-size:12px">${money(item.price)} c/u</div>
+            <b style="display:block;margin-bottom:4px">${escapeHtml(
+              item.name
+            )}</b>
+            <div style="color:#6b7280;font-size:12px">${money(
+              item.price
+            )} c/u</div>
 
             <div style="display:flex;align-items:center;gap:8px;margin-top:8px">
-              <button data-act="dec" data-id="${escapeHtml(item.id)}" style="padding:6px 10px;border-radius:10px;border:1px solid #e5e7eb;background:#fff;cursor:pointer">-</button>
+              <button data-act="dec" data-id="${escapeHtml(
+                item.id
+              )}" style="padding:6px 10px;border-radius:10px;border:1px solid #e5e7eb;background:#fff;cursor:pointer">-</button>
               <b>${item.qty}</b>
-              <button data-act="inc" data-id="${escapeHtml(item.id)}" style="padding:6px 10px;border-radius:10px;border:1px solid #e5e7eb;background:#fff;cursor:pointer">+</button>
+              <button data-act="inc" data-id="${escapeHtml(
+                item.id
+              )}" style="padding:6px 10px;border-radius:10px;border:1px solid #e5e7eb;background:#fff;cursor:pointer">+</button>
 
-              <button data-act="rm" data-id="${escapeHtml(item.id)}" style="margin-left:auto;padding:6px 10px;border-radius:10px;border:1px solid #fee2e2;background:#fff;color:#dc2626;cursor:pointer">Quitar</button>
+              <button data-act="rm" data-id="${escapeHtml(
+                item.id
+              )}" style="margin-left:auto;padding:6px 10px;border-radius:10px;border:1px solid #fee2e2;background:#fff;color:#dc2626;cursor:pointer">Quitar</button>
             </div>
           </div>
         </div>
@@ -417,8 +459,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const lines = cart.map((i) => `• ${i.name} x${i.qty} — ${money(i.price)}`);
     const total = money(getTotal());
-    const msg =
-`Hola, quiero hacer un pedido:
+    const msg = `Hola, quiero hacer un pedido:
 ${lines.join("\n")}
 
 Total: ${total}
@@ -432,7 +473,14 @@ Total: ${total}
     const idx = cart.findIndex((i) => String(i.id) === String(id));
 
     if (idx >= 0) cart[idx].qty += 1;
-    else cart.push({ id, name: product.name, price: Number(product.price) || 0, image: product.image || "", qty: 1 });
+    else
+      cart.push({
+        id,
+        name: product.name,
+        price: Number(product.price) || 0,
+        image: product.image || "",
+        qty: 1,
+      });
 
     saveCart();
     renderCart();
@@ -448,7 +496,10 @@ Total: ${total}
   (async function boot() {
     try {
       products = await fetchProducts();
-      products = products.map(p => ({ ...p, category: normalizeCategory(p.category) }));
+      products = products.map((p) => ({
+        ...p,
+        category: normalizeCategory(p.category),
+      }));
 
       renderSideCategories();
       renderChips();
@@ -457,7 +508,8 @@ Total: ${total}
       renderCart();
     } catch (e) {
       console.error(e);
-      if (grid) grid.innerHTML = `<div style="padding:14px;color:#b00020;">Error cargando productos (API).</div>`;
+      if (grid)
+        grid.innerHTML = `<div style="padding:14px;color:#b00020;">Error cargando productos (API).</div>`;
     }
   })();
 });
