@@ -8,10 +8,16 @@ document.addEventListener("DOMContentLoaded", () => {
   // ✅ API BASE automático (LOCAL vs PRODUCCIÓN)
   const API_BASE =
     location.hostname === "localhost" || location.hostname === "127.0.0.1"
-      ? "http://localhost:3001"
+      ?"https://webmarcoral.onrender.com"
       : "https://webmarcoral.onrender.com"; // 👈 aquí va tu backend ya deployado
 
   const PRODUCTS_ENDPOINT = `${API_BASE}/api/products`;
+
+  // 🔔 Ping para despertar Render (evita cold start)
+fetch(API_BASE, { cache: "no-store" }).catch(() => {});
+
+  window.__API_BASE__ = API_BASE;
+  window.__PRODUCTS_ENDPOINT__ = PRODUCTS_ENDPOINT;
 
   const wa = (msg) =>
     "https://wa.me/" + WHATSAPP + "?text=" + encodeURIComponent(msg);
@@ -200,16 +206,17 @@ document.addEventListener("DOMContentLoaded", () => {
     // Adapta aquí según tu backend/Supabase
     return (Array.isArray(data) ? data : [])
       .map((p) => {
-        const id =
-          p.id ??
-          p.uuid ??
-          p.product_id ??
-          `${p.name || p.producto}-${p.price || p.precio}`;
+        const id = p.id ?? p.uuid ?? p.product_id ?? `${p.name || p.producto}-${p.price_cents || p.price || p.precio}`;
+
         const name = p.name ?? p.producto ?? "";
         const desc = p.description ?? p.descripcion ?? "";
-        const price = Number(p.price ?? p.precio) || 0;
+        const price =
+         Number.isFinite(Number(p.price_cents))
+          ? Number(p.price_cents) / 100
+          : (Number(p.price ?? p.precio) || 0);
+
         const image = p.image_url ?? p.imagen ?? "";
-        const category = normalizeCategory(p.category ?? p.categoria ?? "");
+        const category = normalizeCategory(p.category ?? p.categoria ?? "collares");
 
         return { id, name, desc, price, image, category };
       })
